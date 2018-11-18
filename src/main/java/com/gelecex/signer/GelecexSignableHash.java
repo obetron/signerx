@@ -27,12 +27,7 @@ public class GelecexSignableHash implements ISignable {
 
     @Override
     public byte[] getMessageDigest(DigestAlg digestAlg) throws CryptoException, IOException {
-        try {
-            return GelecexUtils.calculateHash(hashToBeSigned, digestAlg.getName());
-        } catch (GelecexSignerException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return hashToBeSigned;
     }
 
     @Override
