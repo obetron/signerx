@@ -2,6 +2,8 @@ package com.gelecex.signer;
 
 import com.gelecex.signer.exception.GelecexSignerException;
 import com.gelecex.signer.utils.TubitakSettingsUploader;
+import tr.gov.tubitak.uekae.esya.api.cmssignature.ISignable;
+import tr.gov.tubitak.uekae.esya.api.cmssignature.SignableByteArray;
 
 /**
  * Created by ebasaran on 14.11.2018.
@@ -24,10 +26,9 @@ public class GelecexSigner {
     /**
      * Bu metot imzalanacak veriyi alir ve ozetini hesaplar sonrasinda imzalar.
      * @param bytes imzalanacak veri.
-     * @param hashAlg imzalanacak degerin ozetinin hesaplanacagi algoritma.
      */
-    public void signValue(byte[] bytes, String hashAlg) {
-
+    public void signValue(byte[] bytes) {
+        ISignable contentToBeSigned = new SignableByteArray(bytes);
     }
 
     /**
@@ -35,6 +36,7 @@ public class GelecexSigner {
      * @param bytes imzalanacak verinin ozet degeri.
      */
     public void signHashValue(byte[] bytes) {
+        ISignable contentToBeSigned = new GelecexSignableHash(bytes);
 
     }
 }
