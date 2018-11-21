@@ -117,5 +117,10 @@
             <artifactId>ma3api-asic</artifactId>
             <version>2.1.8-RC1</version>
         </dependency>
+        <dependency>
+            <groupId>tr.gov.tubitak.uekae.esya.api</groupId>
+            <artifactId>ma3api-smartcard</artifactId>
+            <version>2.1.8-RC1</version>
+        </dependency>
     </dependencies>
 </project>
