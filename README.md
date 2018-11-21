@@ -1,11 +1,11 @@
 # gelecex-signer
 Tubitak MA3-API kütüphaneleri kullanılarak oluşturulan bir elektronik imza uygulaması.
 
-#### Tubitak ma3-api kütüphaneleri;
+#### Tubitak MA3-API kütüphaneleri;
 Tubitak MA3 (Milli Açık Anahtar Altyapısı) kütüphaneleri proje içerisindeki lib klasörü altında bulunmaktadır. 
 Tubitak MA3 kütüphanelerinin güncel versiyonları http://yazilim.kamusm.gov.tr adresinden indirilebilir.
 
-#### 3rd Party Kütüphaneleri Local Maven Repository Eklemek
+#### Tubitak MA3-API Kütüphanelerini Local Maven Repository Eklemek
 
 `mvn install:install-file -Dfile=<jar-dosya-yolu> -DgroupId=<group-id> -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=pom`
 
