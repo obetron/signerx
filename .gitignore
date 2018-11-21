@@ -277,7 +277,6 @@ tags
 # Ignore Play! working directory #
 /db
 .eclipse
-/lib/
 /logs/
 /modules
 /project/project
