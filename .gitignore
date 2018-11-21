@@ -85,7 +85,6 @@ cwallet.sso.lck### Linux template
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
