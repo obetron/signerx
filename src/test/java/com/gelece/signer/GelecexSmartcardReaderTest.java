@@ -4,7 +4,9 @@ import com.gelecex.signer.GelecexSmartcardReader;
 import com.gelecex.signer.exception.GelecexSignerException;
 import org.junit.Assert;
 import org.junit.Test;
+import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.CardType;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -12,12 +14,12 @@ import java.util.List;
  */
 public class GelecexSmartcardReaderTest {
 
+    private GelecexSmartcardReader gelecexSmartcardReader = new GelecexSmartcardReader();
+
     @Test
     public void getTerminalList() {
-        GelecexSmartcardReader gelecexSmartcardReader = new GelecexSmartcardReader();
         try {
             List<String> terminalList = gelecexSmartcardReader.getTerminalList();
-            System.out.println(terminalList.get(0));
             Assert.assertNotNull(terminalList);
         } catch (GelecexSignerException e) {
             e.printStackTrace();
@@ -26,10 +28,12 @@ public class GelecexSmartcardReaderTest {
 
     @Test
     public void getSmarcardObjectsTest() {
-        GelecexSmartcardReader gelecexSmartcardReader = new GelecexSmartcardReader();
-        String terminalTestValue = "ACS ACR 38U-CCID";
         try {
-            gelecexSmartcardReader.getSmartcardObjects(terminalTestValue);
+            List<String> terminalList = gelecexSmartcardReader.getTerminalList();
+            for (String terminal : terminalList) {
+                HashMap<Long, CardType> smartcardObjects = gelecexSmartcardReader.getSmartcardObjects(terminal);
+                Assert.assertNotNull(smartcardObjects);
+            }
         } catch (GelecexSignerException e) {
             e.printStackTrace();
         }

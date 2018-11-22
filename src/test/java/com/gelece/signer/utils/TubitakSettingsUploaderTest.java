@@ -2,10 +2,9 @@ package com.gelece.signer.utils;
 
 import com.gelecex.signer.exception.GelecexSignerException;
 import com.gelecex.signer.utils.TubitakSettingsUploader;
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tr.gov.tubitak.uekae.esya.api.common.util.LicenseUtil;
 
 import java.io.InputStream;
@@ -17,7 +16,7 @@ import java.lang.reflect.Method;
  */
 public class TubitakSettingsUploaderTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TubitakSettingsUploaderTest.class);
+    private static final Logger LOGGER = Logger.getLogger(TubitakSettingsUploaderTest.class);
 
     @Test
     public void licenseFileReaderTest() {

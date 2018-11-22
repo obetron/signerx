@@ -2,14 +2,14 @@ package com.gelecex.signer;
 
 import com.gelecex.signer.exception.GelecexSignerException;
 import com.gelecex.signer.utils.TubitakSettingsUploader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import tr.gov.tubitak.uekae.esya.api.common.util.bag.Pair;
 import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.CardType;
 import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.SmartCardException;
 import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.SmartOp;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,9 +17,7 @@ import java.util.List;
  */
 public class GelecexSmartcardReader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GelecexSmartcardReader.class);
-    private Long smartcardSlot;
-    private CardType smarcardType;
+    private static final Logger LOGGER = Logger.getLogger(GelecexSmartcardReader.class);
 
     public List<String> getTerminalList() throws GelecexSignerException {
 
@@ -34,18 +32,19 @@ public class GelecexSmartcardReader {
 
     }
 
-    public void getSmartcardObjects(String terminal) throws GelecexSignerException {
+    public HashMap<Long, CardType> getSmartcardObjects(String terminal) throws GelecexSignerException {
+        HashMap<Long, CardType> smartcardObjects = new HashMap<>();
         TubitakSettingsUploader.licenseFileUploader();
         try {
             Pair<Long, CardType> smartcard = SmartOp.getSlotAndCardType(terminal);
             if(smartcard != null) {
-                smartcardSlot = smartcard.getObject1();
-                smarcardType = smartcard.getObject2();
+                smartcardObjects.put(smartcard.getObject1(), smartcard.getObject2());
                 LOGGER.debug("Akıllı kart slot ve kart tipi değerleri alındı.");
             }
 
         } catch (SmartCardException e) {
             throw new GelecexSignerException("Akıllı kart nesneleri alınırken hata oluştu!", e);
         }
+        return smartcardObjects;
     }
 }
