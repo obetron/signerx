@@ -14,15 +14,24 @@ public class GelecexSmartcardReaderTest {
 
     @Test
     public void getTerminalList() {
-
         GelecexSmartcardReader gelecexSmartcardReader = new GelecexSmartcardReader();
         try {
             List<String> terminalList = gelecexSmartcardReader.getTerminalList();
+            System.out.println(terminalList.get(0));
             Assert.assertNotNull(terminalList);
         } catch (GelecexSignerException e) {
             e.printStackTrace();
         }
-
     }
 
+    @Test
+    public void getSmarcardObjectsTest() {
+        GelecexSmartcardReader gelecexSmartcardReader = new GelecexSmartcardReader();
+        String terminalTestValue = "ACS ACR 38U-CCID";
+        try {
+            gelecexSmartcardReader.getSmartcardObjects(terminalTestValue);
+        } catch (GelecexSignerException e) {
+            e.printStackTrace();
+        }
+    }
 }
