@@ -8,6 +8,7 @@ import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.CardType;
 import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.SmartCardException;
 import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.SmartOp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +20,18 @@ public class GelecexSmartcardReader {
 
     private static final Logger LOGGER = Logger.getLogger(GelecexSmartcardReader.class);
 
-    public List<String> getTerminalList() throws GelecexSignerException {
+    public List<GelecexTerminal> getTerminalList() throws GelecexSignerException {
+        List<GelecexTerminal> gelecexTerminalList = new ArrayList<>();
+        List<String> gelecexTerminals = getTerminals();
+        for (String glcxTerminal : gelecexTerminals) {
+            GelecexTerminal gelecexTerminal = new GelecexTerminal();
+            gelecexTerminal.setTerminalName(glcxTerminal);
+            HashMap<Long, CardType> gelecexSmartcardObjects = getSmartcardObjects(glcxTerminal);
+        }
+        return gelecexTerminalList;
+    }
 
+    private List<String> getTerminals() throws GelecexSignerException {
         TubitakSettingsUploader.licenseFileUploader();
         try {
             String[] terminals = SmartOp.getCardTerminals();
@@ -32,7 +43,7 @@ public class GelecexSmartcardReader {
 
     }
 
-    public HashMap<Long, CardType> getSmartcardObjects(String terminal) throws GelecexSignerException {
+    private HashMap<Long, CardType> getSmartcardObjects(String terminal) throws GelecexSignerException {
         HashMap<Long, CardType> smartcardObjects = new HashMap<>();
         TubitakSettingsUploader.licenseFileUploader();
         try {
