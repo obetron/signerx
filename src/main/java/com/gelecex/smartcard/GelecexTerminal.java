@@ -1,4 +1,4 @@
-package com.gelecex.signer;
+package com.gelecex.smartcard;
 
 import org.apache.log4j.Logger;
 
@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 public class GelecexTerminal {
 
     private static final Logger LOGGER = Logger.getLogger(GelecexTerminal.class);
+
     private String terminalName;
     private GelecexSmartcard gelecexSmartcard;
-    private GelecexCertificate gelecexCertificate;
 
     public String getTerminalName() {
         return terminalName;
@@ -28,11 +28,4 @@ public class GelecexTerminal {
         this.gelecexSmartcard = gelecexSmartcard;
     }
 
-    public GelecexCertificate getGelecexCertificate() {
-        return gelecexCertificate;
-    }
-
-    protected void setGelecexCertificate(GelecexCertificate gelecexCertificate) {
-        this.gelecexCertificate = gelecexCertificate;
-    }
 }

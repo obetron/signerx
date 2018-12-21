@@ -1,8 +1,7 @@
-package com.gelecex.signer.utils;
+package com.gelecex.smartcard.utils;
 
-import com.gelecex.signer.GelecexDigestAlg;
-import com.gelecex.signer.exception.GelecexSignerException;
-import sun.plugin2.message.Message;
+import com.gelecex.smartcard.GelecexDigestAlg;
+import com.gelecex.smartcard.exception.GelecexSignerException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

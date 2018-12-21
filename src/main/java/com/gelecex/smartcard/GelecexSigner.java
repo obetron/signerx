@@ -1,7 +1,7 @@
-package com.gelecex.signer;
+package com.gelecex.smartcard;
 
-import com.gelecex.signer.exception.GelecexSignerException;
-import com.gelecex.signer.utils.TubitakSettingsUploader;
+import com.gelecex.smartcard.exception.GelecexSignerException;
+import com.gelecex.smartcard.utils.TubitakSettingsUploader;
 import tr.gov.tubitak.uekae.esya.api.cmssignature.CMSSignatureException;
 import tr.gov.tubitak.uekae.esya.api.cmssignature.ISignable;
 import tr.gov.tubitak.uekae.esya.api.cmssignature.SignableByteArray;

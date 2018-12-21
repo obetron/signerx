@@ -1,4 +1,4 @@
-package com.gelecex.signer;
+package com.gelecex.smartcard;
 
 /**
  * Created by obetron on 18.11.2018

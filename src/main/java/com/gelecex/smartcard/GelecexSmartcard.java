@@ -1,4 +1,4 @@
-package com.gelecex.signer;
+package com.gelecex.smartcard;
 
 import org.apache.log4j.Logger;
 import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.CardType;

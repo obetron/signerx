@@ -1,12 +1,9 @@
-package com.gelece.signer;
+package com.gelecex.smartcard;
 
-import com.gelecex.signer.GelecexSigner;
-import com.gelecex.signer.exception.GelecexSignerException;
+import com.gelecex.smartcard.GelecexSigner;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tr.gov.tubitak.uekae.esya.api.cmssignature.ISignable;
-import tr.gov.tubitak.uekae.esya.api.cmssignature.SignableByteArray;
 
 /**
  * Created by ebasaran on 14.11.2018.

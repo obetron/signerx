@@ -1,4 +1,4 @@
-package com.gelecex.signer.exception;
+package com.gelecex.smartcard.exception;
 
 /**
  * Created by obetron on 17.11.2018

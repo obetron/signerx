@@ -1,7 +1,6 @@
-package com.gelece.signer.utils;
+package com.gelecex.smartcard.utils;
 
-import com.gelecex.signer.exception.GelecexSignerException;
-import com.gelecex.signer.utils.TubitakSettingsUploader;
+import com.gelecex.smartcard.exception.GelecexSignerException;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;

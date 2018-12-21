@@ -1,6 +1,6 @@
-package com.gelecex.signer.utils;
+package com.gelecex.smartcard.utils;
 
-import com.gelecex.signer.exception.GelecexSignerException;
+import com.gelecex.smartcard.exception.GelecexSignerException;
 import org.apache.log4j.Logger;
 import tr.gov.tubitak.uekae.esya.api.common.ESYAException;
 import tr.gov.tubitak.uekae.esya.api.common.util.LicenseUtil;
