@@ -1,14 +1,5 @@
 package com.gelecex.smartcard;
 
-import com.gelecex.smartcard.GelecexSmartcardReader;
-import com.gelecex.smartcard.exception.GelecexSignerException;
-import org.junit.Assert;
-import org.junit.Test;
-import tr.gov.tubitak.uekae.esya.api.smartcard.pkcs11.CardType;
-
-import java.util.HashMap;
-import java.util.List;
-
 /**
  * Created by obetron on 21.11.2018
  */

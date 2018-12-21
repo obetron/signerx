@@ -1,7 +1,6 @@
 package com.gelecex.smartcard.model;
 
-import com.gelecex.smartcard.manager.EntityManager;
-import com.gelecex.smartcard.manager.XMLEntityManager;
+import com.gelecex.smartcard.exception.SmartcardReaderException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,24 +15,31 @@ public class SmartcardDAOTest {
 
 
     private SmartcardDAO smartcardDAO;
-    private EntityManager entityManager;
-    List<Smartcard> smartcardList = new ArrayList<>();
+    List<Smartcard> smartcardList;
 
     @Before
-    public void initTest(){
-        entityManager = new XMLEntityManager();
+    public void initTest() throws SmartcardReaderException {
         smartcardDAO = new SmartcardDAOImpl();
-
-        smartcardList = entityManager.getAllSc();
+        smartcardList = smartcardDAO.getSmartcardList();
     }
 
     @Test
-    public void saveSmartcard() {
+    public void saveSmartcard() throws SmartcardReaderException {
         int currentSmartcardListSize = smartcardList.size();
         Smartcard newSmartcard = new Smartcard("ALADDIN", "eTPKCS11", "3BD5180081313A7D8073C8211030");
         smartcardDAO.saveSmartcard(newSmartcard);
 
+        smartcardList = smartcardDAO.getSmartcardList();
         Assert.assertEquals("Smartcard List Size Control", (currentSmartcardListSize+1), smartcardList.size());
+    }
+
+    @Test
+    public void getSmartcardList() throws SmartcardReaderException {
+        Smartcard newSmartcard = new Smartcard("ALADDIN", "eTPKCS11", "3BD5180081313A7D8073C8211030");
+        smartcardDAO.saveSmartcard(newSmartcard);
+
+        smartcardList = smartcardDAO.getSmartcardList();
+        Assert.assertTrue(smartcardList.size() > 0);
     }
 
 }

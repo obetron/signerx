@@ -1,6 +1,5 @@
 package com.gelecex.smartcard.utils;
 
-import com.gelecex.smartcard.GelecexDigestAlg;
 import com.gelecex.smartcard.exception.GelecexSignerException;
 
 import java.security.MessageDigest;

@@ -1,11 +1,15 @@
 package com.gelecex.smartcard.model;
 
+import com.gelecex.smartcard.exception.SmartcardReaderException;
+
 import java.util.List;
 
 /**
  * Created by obetron on 19.12.2018
  */
 public class SmartcardDAOImpl implements SmartcardDAO {
+
+    private List<Smartcard> smartcards;
 
     @Override
     public void saveSmartcard(Smartcard smartcard) {
@@ -28,7 +32,11 @@ public class SmartcardDAOImpl implements SmartcardDAO {
     }
 
     @Override
-    public List<Smartcard> getSmartcardList() {
-        return null;
+    public List<Smartcard> getSmartcardList() throws SmartcardReaderException {
+        if(smartcards != null && !smartcards.isEmpty()) {
+            return smartcards;
+        } else {
+            throw new SmartcardReaderException("smartcardReaderError");
+        }
     }
 }
