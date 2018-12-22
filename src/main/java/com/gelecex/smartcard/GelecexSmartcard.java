@@ -1,4 +1,4 @@
-package com.gelecex.smartcard.view;
+package com.gelecex.smartcard;
 
 /**
  * Created by obetron on 18.12.2018

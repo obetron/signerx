@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,12 +13,12 @@ import java.util.List;
 public class SmartcardDAOTest {
 
 
-    private SmartcardDAO smartcardDAO;
+    private SmartcardDao smartcardDAO;
     List<Smartcard> smartcardList;
 
     @Before
     public void initTest() throws SmartcardReaderException {
-        smartcardDAO = new SmartcardDAOImpl();
+        smartcardDAO = new SmartcardXMLImpl();
         smartcardList = smartcardDAO.getSmartcardList();
     }
 

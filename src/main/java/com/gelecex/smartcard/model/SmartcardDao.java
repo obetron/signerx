@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by obetron on 18.12.2018
  */
-public interface SmartcardDAO {
+public interface SmartcardDao {
 
     void saveSmartcard(Smartcard smartcard);
     void updateSmartcard(Smartcard smartcard);
