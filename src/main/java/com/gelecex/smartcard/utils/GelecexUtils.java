@@ -1,9 +1,15 @@
 package com.gelecex.smartcard.utils;
 
+import com.gelecex.smartcard.enums.GelecexDigestAlg;
 import com.gelecex.smartcard.exception.GelecexSignerException;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 
 /**
  * Created by obetron on 18.11.2018
@@ -27,6 +33,19 @@ public class GelecexUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new GelecexSignerException("Hatali mesaj ozeti!", e);
         }
+    }
+
+    public static String readGelecexConfigFile(String key) {
+        try {
+            Properties properties = new Properties();
+            properties.load(GelecexUtils.class.getResourceAsStream("/gelecex_config.properties"));
+            return properties.getProperty(key);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

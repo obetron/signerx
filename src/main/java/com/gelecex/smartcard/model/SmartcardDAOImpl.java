@@ -1,6 +1,7 @@
 package com.gelecex.smartcard.model;
 
 import com.gelecex.smartcard.exception.SmartcardReaderException;
+import com.gelecex.smartcard.utils.GelecexResourceBundlei18n;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class SmartcardDAOImpl implements SmartcardDAO {
         if(smartcards != null && !smartcards.isEmpty()) {
             return smartcards;
         } else {
-            throw new SmartcardReaderException("smartcardReaderError");
+            throw new SmartcardReaderException(GelecexResourceBundlei18n.getMessage("smartcardReaderError"));
         }
     }
 }
