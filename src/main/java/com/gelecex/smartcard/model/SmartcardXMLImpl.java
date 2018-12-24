@@ -37,7 +37,7 @@ public class SmartcardXMLImpl implements SmartcardDao {
         if(smartcards != null && !smartcards.isEmpty()) {
             return smartcards;
         } else {
-            throw new SmartcardReaderException(GelecexI18n.getMessage("smartcardReaderError"));
+            throw new SmartcardReaderException(GelecexI18n.getErrorMessage("smartcardReaderError"));
         }
     }
 

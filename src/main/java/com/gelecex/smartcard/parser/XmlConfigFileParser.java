@@ -25,11 +25,11 @@ public class XmlConfigFileParser {
             document.getDocumentElement().normalize();
             return document;
         } catch (ParserConfigurationException e) {
-            throw new XMLParserException(GelecexI18n.getMessage("documentBuilderError"), e);
+            throw new XMLParserException(GelecexI18n.getErrorMessage("documentBuilderError"), e);
         } catch (SAXException e) {
-            throw new XMLParserException(GelecexI18n.getMessage("documentSAXError"), e);
+            throw new XMLParserException(GelecexI18n.getErrorMessage("documentSAXError"), e);
         } catch (IOException e) {
-            throw new XMLParserException(GelecexI18n.getMessage("documentIOError"), e);
+            throw new XMLParserException(GelecexI18n.getErrorMessage("documentIOError"), e);
         }
     }
 
