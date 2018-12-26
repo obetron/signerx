@@ -12,9 +12,21 @@ public class GelecexI18n {
     private static String message;
 
     public static String getErrorMessage(String str) {
-        resourceBundle = ResourceBundle.getBundle("errors",
+        return getMessage(str, "errors");
+    }
+
+    public static String getWarningMessage(String str) {
+        return getMessage(str, "warning");
+    }
+
+    public static String getInfoMessage(String str) {
+        return getMessage(str, "info");
+    }
+
+    private static String getMessage(String msg, String type) {
+        resourceBundle = ResourceBundle.getBundle(type,
                 new Locale(GelecexUtils.readGelecexConfigFile("gelecex.lang")));
-        message = resourceBundle.getString(str);
+        message = resourceBundle.getString(msg);
         return message;
     }
 }
