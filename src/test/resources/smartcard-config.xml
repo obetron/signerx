@@ -1,0 +1,15 @@
+<smartcard>
+    <card-type name="CARDOS">
+        <lib name="cmp11"/>
+    </card-type>
+
+    <card-type name="AEPKEYPER">
+        <lib name="bp201w32HSM"/>
+    </card-type>
+
+    <card-type name="ALADDIN">
+        <lib name="eTPKCS11"/>
+        <atr value="3BD5180081313A7D8073C8211030"/>
+        <atr value="3BD518008131FE7D8073C82110F4"/>
+    </card-type>
+</smartcard>
