@@ -13,13 +13,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by obetron on 22.12.2018
  */
-public class FileXMLParserImpl implements XMLParser {
+public class XMLParserImpl implements XMLParser {
 
     @Override
     public Document getXmlDocument(InputStream configStream) throws XMLParserException {
@@ -45,14 +43,8 @@ public class FileXMLParserImpl implements XMLParser {
     }
 
     @Override
-    public List<Node> getAttributeFromNode(NodeList nodeList, String attributeName) {
-        List<Node> attributes = new ArrayList<>();
-        for(int i = 0; i<nodeList.getLength(); i++) {
-            Node node = nodeList.item(i);
-            Node attribute = node.getAttributes().getNamedItem(attributeName);
-            attributes.add(attribute);
-        }
-
-        return attributes;
+    public String getAttributeFromNode(Node node, String attributeName) {
+        String attributeValue = node.getAttributes().getNamedItem(attributeName).getNodeValue();
+        return attributeValue;
     }
 }

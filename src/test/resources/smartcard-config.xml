@@ -12,4 +12,17 @@
         <atr value="3BD5180081313A7D8073C8211030"/>
         <atr value="3BD518008131FE7D8073C82110F4"/>
     </card-type>
+
+    <card-type name="SAFESIGN">
+        <lib name="aetpkss1"/>
+        <atr value="3BBB1800C01031FE4580670412B00303000081053C"/>
+        <atr value="3BFA1800FF8131FE454A434F5032315632333165"/>
+        <atr value="3BF81800FF8131FE454A434F507632343143"/>
+        <atr value="3B7918000053462D3443432D3031"/>
+    </card-type>
+
+    <card-type name="NCIPHER">
+        <lib name="cknfast" arch="32"/>
+        <lib name="cknfast-64" arch="64"/>
+    </card-type>
 </smartcard>

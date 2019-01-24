@@ -7,7 +7,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * Created by obetron on 28.12.2018
@@ -17,5 +16,5 @@ public interface XMLParser {
 
     Document getXmlDocument(InputStream configStream) throws XMLParserException;
     NodeList getTagFromNode(Element element, String tagName);
-    List<Node> getAttributeFromNode(NodeList nodeList, String attributeName);
+    String getAttributeFromNode(Node node, String attributeName);
 }
