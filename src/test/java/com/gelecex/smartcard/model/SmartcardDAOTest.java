@@ -1,5 +1,10 @@
 package com.gelecex.smartcard.model;
 
+import com.gelecex.smartcard.exception.SmartcardReaderException;
+import com.gelecex.smartcard.exception.XMLParserException;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.List;
 
 /**
@@ -7,33 +12,11 @@ import java.util.List;
  */
 public class SmartcardDAOTest {
 
-
-    private SmartcardDao smartcardDAO;
-    List<Smartcard> smartcardList;
-
-//    @Before
-//    public void initTest() throws SmartcardReaderException {
-//        smartcardDAO = new SmartcardXMLImpl();
-//        smartcardList = smartcardDAO.getSmartcardList();
-//    }
-//
-//    @Test
-//    public void saveSmartcard() throws SmartcardReaderException {
-//        int currentSmartcardListSize = smartcardList.size();
-//        Smartcard newSmartcard = new Smartcard("ALADDIN", "eTPKCS11", "3BD5180081313A7D8073C8211030");
-//        smartcardDAO.saveSmartcard(newSmartcard);
-//
-//        smartcardList = smartcardDAO.getSmartcardList();
-//        Assert.assertEquals("Smartcard List Size Control", (currentSmartcardListSize+1), smartcardList.size());
-//    }
-//
-//    @Test
-//    public void getSmartcardList() throws SmartcardReaderException {
-//        Smartcard newSmartcard = new Smartcard("ALADDIN", "eTPKCS11", "3BD5180081313A7D8073C8211030");
-//        smartcardDAO.saveSmartcard(newSmartcard);
-//
-//        smartcardList = smartcardDAO.getSmartcardList();
-//        Assert.assertTrue(smartcardList.size() > 0);
-//    }
+    @Test
+    public void testGetSmartcardList() throws SmartcardReaderException, XMLParserException {
+        SmartcardDao smartcard = new SmartcardXMLImpl();
+        List<Smartcard> smartcardList = smartcard.getSmartcardList();
+        Assert.assertEquals(5, smartcardList.size());
+    }
 
 }

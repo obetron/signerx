@@ -1,6 +1,7 @@
 package com.gelecex.smartcard.model;
 
 import com.gelecex.smartcard.exception.SmartcardReaderException;
+import com.gelecex.smartcard.exception.XMLParserException;
 
 import java.util.List;
 
@@ -13,6 +14,6 @@ public interface SmartcardDao {
     void updateSmartcard(Smartcard smartcard);
     void deleteSmartcard(Smartcard smartcard);
     Smartcard getSmartcard(String lib);
-    List<Smartcard> getSmartcardList() throws SmartcardReaderException;
+    List<Smartcard> getSmartcardList() throws SmartcardReaderException, XMLParserException;
 
 }

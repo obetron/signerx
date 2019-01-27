@@ -18,36 +18,30 @@ public class XmlConfigFileParserTest {
 
     private InputStream configFile;
     private XMLParser xmlParser;
+    private Document doc;
+    private Element element;
 
     @Before
-    public void init() {
+    public void init() throws XMLParserException {
         configFile = XmlConfigFileParserTest.class.getResourceAsStream("/smartcard-config.xml");
         xmlParser = new XMLParserImpl();
-    }
-
-    private Document getDocument() throws XMLParserException {
-        Document doc = xmlParser.getXmlDocument(configFile);
-        return doc;
+        doc = xmlParser.getXmlDocument(configFile);
+        element = doc.getDocumentElement();
     }
 
     @Test
-    public void testGetXmlDocument() throws XMLParserException {
-        Document doc = getDocument();
+    public void testGetXmlDocument() {
         Assert.assertNotNull(doc);
     }
 
     @Test
-    public void testGetTagFromNode() throws XMLParserException {
-        Document doc = getDocument();
-        Element element = doc.getDocumentElement();
+    public void testGetTagFromNode() {
         NodeList nodeList = xmlParser.getTagFromNode(element, "card-type");
         Assert.assertEquals(5, nodeList.getLength());
     }
 
     @Test
-    public void testGetAttributeFromNode() throws XMLParserException {
-        Document doc = getDocument();
-        Element element = doc.getDocumentElement();
+    public void testGetAttributeFromNode() {
         NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
         Node cardTypeNode = cardTypeNodeList.item(0);
         String cardTypeName = xmlParser.getAttributeFromNode(cardTypeNode, "name");
@@ -55,9 +49,7 @@ public class XmlConfigFileParserTest {
     }
 
     @Test
-    public void testGetSubTagFromNode() throws XMLParserException {
-        Document doc = getDocument();
-        Element element = doc.getDocumentElement();
+    public void testGetSubTagFromNode() {
         NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
         Element el = (Element) cardTypeNodeList.item(4);
         NodeList libNodeList = xmlParser.getTagFromNode(el, "lib");
@@ -65,14 +57,30 @@ public class XmlConfigFileParserTest {
     }
 
     @Test
-    public void testGetSubAttributeFromNode() throws XMLParserException {
-        Document doc = getDocument();
-        Element element = doc.getDocumentElement();
+    public void testGetSubAttributeFromNode() {
         NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
         Element subElement = (Element) cardTypeNodeList.item(0);
         NodeList libNodeList = xmlParser.getTagFromNode(subElement, "lib");
         Node libNode = libNodeList.item(0);
         String libName = xmlParser.getAttributeFromNode(libNode, "name");
         Assert.assertEquals("cmp11", libName);
+    }
+
+    @Test
+    public void testGetSubAtrTagFromNode() {
+        NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
+        Element el = (Element) cardTypeNodeList.item(3);
+        NodeList atrNodeList = xmlParser.getTagFromNode(el, "atr");
+        Assert.assertEquals(4, atrNodeList.getLength());
+    }
+
+    @Test
+    public void testGetSubAtrAttributesFromNode() {
+        NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
+        Element subElement = (Element) cardTypeNodeList.item(2);
+        NodeList atrNodeList = xmlParser.getTagFromNode(subElement, "atr");
+        Node atrNode = atrNodeList.item(0);
+        String atrValue = xmlParser.getAttributeFromNode(atrNode, "value");
+        Assert.assertEquals("3BD5180081313A7D8073C8211030", atrValue);
     }
 }
