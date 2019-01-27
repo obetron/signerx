@@ -59,9 +59,20 @@ public class XmlConfigFileParserTest {
         Document doc = getDocument();
         Element element = doc.getDocumentElement();
         NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
-        NodeList libNodeList = null;
         Element el = (Element) cardTypeNodeList.item(4);
-        libNodeList = xmlParser.getTagFromNode(el, "lib");
+        NodeList libNodeList = xmlParser.getTagFromNode(el, "lib");
         Assert.assertEquals(2, libNodeList.getLength());
+    }
+
+    @Test
+    public void testGetSubAttributeFromNode() throws XMLParserException {
+        Document doc = getDocument();
+        Element element = doc.getDocumentElement();
+        NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
+        Element subElement = (Element) cardTypeNodeList.item(0);
+        NodeList libNodeList = xmlParser.getTagFromNode(subElement, "lib");
+        Node libNode = libNodeList.item(0);
+        String libName = xmlParser.getAttributeFromNode(libNode, "name");
+        Assert.assertEquals("cmp11", libName);
     }
 }
