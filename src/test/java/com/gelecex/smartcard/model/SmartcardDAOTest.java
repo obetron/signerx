@@ -18,5 +18,4 @@ public class SmartcardDAOTest {
         List<Smartcard> smartcardList = smartcard.getSmartcardList();
         Assert.assertEquals(5, smartcardList.size());
     }
-
 }

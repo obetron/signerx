@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class SmartcardXMLImpl implements SmartcardDao {
 
+    private XMLParser xmlParser;
     private List<Smartcard> smartcardList;
 
     @Override
@@ -35,15 +36,13 @@ public class SmartcardXMLImpl implements SmartcardDao {
     }
 
     @Override
-    public Smartcard getSmartcard(String lib) {
+    public Smartcard getSmartcard(String lib) throws XMLParserException {
         return null;
     }
 
     @Override
     public List<Smartcard> getSmartcardList() throws XMLParserException {
-        XMLParser xmlParser = new XMLParserImpl();
-        InputStream smartcardConfigStream = SmartcardXMLImpl.class.getResourceAsStream("/smartcard-config.xml");
-        Document doc = xmlParser.getXmlDocument(smartcardConfigStream);
+        Document doc = getDocumentFromProperties();
         Element element = doc.getDocumentElement();
         NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
         smartcardList = new ArrayList<>();
@@ -80,4 +79,10 @@ public class SmartcardXMLImpl implements SmartcardDao {
         return smartcardList;
     }
 
+    private Document getDocumentFromProperties() throws XMLParserException {
+        xmlParser = new XMLParserImpl();
+        InputStream smartcardConfigStream = SmartcardXMLImpl.class.getResourceAsStream("/smartcard-config.xml");
+        Document doc = xmlParser.getXmlDocument(smartcardConfigStream);
+        return doc;
+    }
 }

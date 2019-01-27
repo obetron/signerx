@@ -45,7 +45,9 @@ public class XMLParserImpl implements XMLParser {
     @Override
     public String getAttributeFromNode(Node node, String attributeName) {
         String attributeValue = null;
-        if(node.getAttributes() != null && node.getAttributes().getNamedItem(attributeName) != null){
+        if(node != null
+                && node.getAttributes() != null
+                && node.getAttributes().getNamedItem(attributeName) != null){
             attributeValue = node.getAttributes().getNamedItem(attributeName).getNodeValue();
         }
         return attributeValue;

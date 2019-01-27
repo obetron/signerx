@@ -83,4 +83,13 @@ public class XmlConfigFileParserTest {
         String atrValue = xmlParser.getAttributeFromNode(atrNode, "value");
         Assert.assertEquals("3BD5180081313A7D8073C8211030", atrValue);
     }
+
+    @Test
+    public void testGetAttributesNullValue() {
+        NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
+        Element cardTypeElement = (Element) cardTypeNodeList.item(0);
+        NodeList atrNodeList = xmlParser.getTagFromNode(cardTypeElement, "atr");
+        Node atrNode = atrNodeList.item(0);
+        Assert.assertEquals(null, atrNode);
+    }
 }
