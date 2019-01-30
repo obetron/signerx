@@ -22,21 +22,33 @@ public class SmartcardXMLImpl implements SmartcardDao {
 
     @Override
     public void saveSmartcard(Smartcard smartcard) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void updateSmartcard(Smartcard smartcard) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void deleteSmartcard(Smartcard smartcard) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public Smartcard getSmartcard(String lib) throws XMLParserException {
+    public Smartcard getSmartcard(String atrValue) throws XMLParserException {
+        Document doc = getDocumentFromProperties();
+        Element element = doc.getDocumentElement();
+        NodeList nodeList = xmlParser.getTagFromNode(element, "cart-type");
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Smartcard smartcard = getSmartcard(nodeList.item(i));
+            List<String> atrValueList = smartcard.getAtrValueList();
+            for (String tempAtrValue : atrValueList) {
+                if(tempAtrValue.equals(atrValue)){
+                    return smartcard;
+                }
+            }
+        }
         return null;
     }
 
@@ -47,33 +59,7 @@ public class SmartcardXMLImpl implements SmartcardDao {
         NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
         smartcardList = new ArrayList<>();
         for (int i = 0; i < cardTypeNodeList.getLength(); i++) {
-            Smartcard smartcard = new Smartcard();
-            Node cardTypeNode = cardTypeNodeList.item(i);
-            String cardTypeName = xmlParser.getAttributeFromNode(cardTypeNode, "name");
-            smartcard.setCardType(cardTypeName);
-
-            Element cardTypeElement = (Element) cardTypeNodeList.item(i);
-            NodeList libNodeList = xmlParser.getTagFromNode(cardTypeElement, "lib");
-            List<SmartcardLibrary> smartcardLibraryList = new ArrayList<>();
-            for (int j = 0; j < libNodeList.getLength(); j++) {
-                SmartcardLibrary smartcardLibrary = new SmartcardLibrary();
-                Node libNode = libNodeList.item(j);
-                String libName = xmlParser.getAttributeFromNode(libNode, "name");
-                String archName = xmlParser.getAttributeFromNode(libNode, "arch");
-                smartcardLibrary.setName(libName);
-                smartcardLibrary.setArch(archName);
-                smartcardLibraryList.add(smartcardLibrary);
-            }
-            smartcard.setSmartcardLibraryList(smartcardLibraryList);
-
-            NodeList atrNodeList = xmlParser.getTagFromNode(cardTypeElement, "atr");
-            List<String> atrValueList = new ArrayList<>();
-            for (int j = 0; j < atrNodeList.getLength(); j++) {
-                Node atrNode = atrNodeList.item(j);
-                String atrValue = xmlParser.getAttributeFromNode(atrNode, "value");
-                atrValueList.add(atrValue);
-            }
-            smartcard.setAtrValueList(atrValueList);
+            Smartcard smartcard = getSmartcard(cardTypeNodeList.item(i));
             smartcardList.add(smartcard);
         }
         return smartcardList;
@@ -84,5 +70,40 @@ public class SmartcardXMLImpl implements SmartcardDao {
         InputStream smartcardConfigStream = SmartcardXMLImpl.class.getResourceAsStream("/smartcard-config.xml");
         Document doc = xmlParser.getXmlDocument(smartcardConfigStream);
         return doc;
+    }
+
+    private Smartcard getSmartcard(Node cardTypeNode) {
+        Smartcard smartcard = new Smartcard();
+        String cardTypeName = xmlParser.getAttributeFromNode(cardTypeNode, "name");
+        smartcard.setCardType(cardTypeName);
+        smartcard.setSmartcardLibraryList(getSmartcardLibraryList((Element) cardTypeNode));
+        smartcard.setAtrValueList(getAtrValueList((Element) cardTypeNode));
+        return smartcard;
+    }
+
+    private List<SmartcardLibrary> getSmartcardLibraryList(Element cardTypeNodeElement) {
+        NodeList libNodeList = xmlParser.getTagFromNode(cardTypeNodeElement, "lib");
+        List<SmartcardLibrary> smartcardLibraryList = new ArrayList<>();
+        for (int j = 0; j < libNodeList.getLength(); j++) {
+            SmartcardLibrary smartcardLibrary = new SmartcardLibrary();
+            Node libNode = libNodeList.item(j);
+            String libName = xmlParser.getAttributeFromNode(libNode, "name");
+            String archName = xmlParser.getAttributeFromNode(libNode, "arch");
+            smartcardLibrary.setName(libName);
+            smartcardLibrary.setArch(archName);
+            smartcardLibraryList.add(smartcardLibrary);
+        }
+        return smartcardLibraryList;
+    }
+
+    private List<String> getAtrValueList(Element cardTypeNodeElement) {
+        NodeList atrNodeList = xmlParser.getTagFromNode(cardTypeNodeElement, "atr");
+        List<String> atrValueList = new ArrayList<>();
+        for (int j = 0; j < atrNodeList.getLength(); j++) {
+            Node atrNode = atrNodeList.item(j);
+            String atrValue = xmlParser.getAttributeFromNode(atrNode, "value");
+            atrValueList.add(atrValue);
+        }
+        return atrValueList;
     }
 }

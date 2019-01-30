@@ -13,7 +13,7 @@ public interface SmartcardDao {
     void saveSmartcard(Smartcard smartcard);
     void updateSmartcard(Smartcard smartcard);
     void deleteSmartcard(Smartcard smartcard);
-    Smartcard getSmartcard(String lib) throws XMLParserException;
+    Smartcard getSmartcard(String atrValue) throws XMLParserException;
     List<Smartcard> getSmartcardList() throws SmartcardReaderException, XMLParserException;
 
 }
