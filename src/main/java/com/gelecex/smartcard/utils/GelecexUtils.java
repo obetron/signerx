@@ -3,10 +3,8 @@ package com.gelecex.smartcard.utils;
 import com.gelecex.smartcard.enums.GelecexDigestAlg;
 import com.gelecex.smartcard.exception.GelecexSignerException;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
@@ -33,6 +31,18 @@ public class GelecexUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new GelecexSignerException("Hatali mesaj ozeti!", e);
         }
+    }
+
+    public static String byteToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (int i = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xff;
+            if (v < 16) {
+                sb.append('0');
+            }
+            sb.append(Integer.toHexString(v));
+        }
+        return sb.toString().toUpperCase();
     }
 
     public static String readGelecexConfigFile(String key) {
