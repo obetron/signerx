@@ -2,6 +2,8 @@ package com.gelecex.smartcard.model;
 
 import com.gelecex.smartcard.exception.SmartcardReaderException;
 import com.gelecex.smartcard.exception.XMLParserException;
+import com.gelecex.smartcard.service.SmartcardDao;
+import com.gelecex.smartcard.service.SmartcardXMLImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -49,5 +51,12 @@ public class SmartcardDAOTest {
         List<Smartcard> smartcardList = smartcardDao.getSmartcardList();
         Smartcard smartcard = smartcardList.get(4);
         Assert.assertEquals("64", smartcard.getSmartcardLibraryList().get(1).getArch());
+    }
+
+    @Test
+    public void testGetSmartcard() throws XMLParserException {
+        SmartcardDao smartcardDao = new SmartcardXMLImpl();
+        Smartcard smartcard = smartcardDao.getSmartcard("3BD5180081313A7D8073C8211030");
+        Assert.assertEquals("eTPKCS11", smartcard.getSmartcardLibraryList().get(0).getName());
     }
 }

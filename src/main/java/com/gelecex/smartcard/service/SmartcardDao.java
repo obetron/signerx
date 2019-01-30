@@ -1,7 +1,8 @@
-package com.gelecex.smartcard.model;
+package com.gelecex.smartcard.service;
 
 import com.gelecex.smartcard.exception.SmartcardReaderException;
 import com.gelecex.smartcard.exception.XMLParserException;
+import com.gelecex.smartcard.model.Smartcard;
 
 import java.util.List;
 

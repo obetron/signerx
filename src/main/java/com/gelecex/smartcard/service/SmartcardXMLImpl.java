@@ -1,6 +1,8 @@
-package com.gelecex.smartcard.model;
+package com.gelecex.smartcard.service;
 
 import com.gelecex.smartcard.exception.XMLParserException;
+import com.gelecex.smartcard.model.Smartcard;
+import com.gelecex.smartcard.model.SmartcardLibrary;
 import com.gelecex.smartcard.parser.XMLParser;
 import com.gelecex.smartcard.parser.XMLParserImpl;
 import org.w3c.dom.Document;
@@ -39,7 +41,7 @@ public class SmartcardXMLImpl implements SmartcardDao {
     public Smartcard getSmartcard(String atrValue) throws XMLParserException {
         Document doc = getDocumentFromProperties();
         Element element = doc.getDocumentElement();
-        NodeList nodeList = xmlParser.getTagFromNode(element, "cart-type");
+        NodeList nodeList = xmlParser.getTagFromNode(element, "card-type");
         for (int i = 0; i < nodeList.getLength(); i++) {
             Smartcard smartcard = getSmartcard(nodeList.item(i));
             List<String> atrValueList = smartcard.getAtrValueList();
