@@ -18,7 +18,7 @@ public class SmartcardDAOTest {
     public void testGetSmartcardList() throws SmartcardReaderException, XMLParserException {
         SmartcardDao smartcard = new SmartcardXMLImpl();
         List<Smartcard> smartcardList = smartcard.getSmartcardList();
-        Assert.assertEquals(5, smartcardList.size());
+        Assert.assertEquals(6, smartcardList.size());
     }
 
     @Test

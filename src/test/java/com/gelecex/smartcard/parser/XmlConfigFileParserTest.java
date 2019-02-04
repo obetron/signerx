@@ -37,7 +37,7 @@ public class XmlConfigFileParserTest {
     @Test
     public void testGetTagFromNode() {
         NodeList nodeList = xmlParser.getTagFromNode(element, "card-type");
-        Assert.assertEquals(5, nodeList.getLength());
+        Assert.assertEquals(6, nodeList.getLength());
     }
 
     @Test
