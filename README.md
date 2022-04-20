@@ -1,4 +1,4 @@
-# gelecex-signer
+# gelecex-signerx
 gelecex-signer projesi birden fazla modulden olusan vefarkli modullerin imzalamada farkli islemleri ustlendigi bir projedir. 
 
 * signerx-common
