@@ -1,16 +1,34 @@
 # gelecex-signer
-Tubitak MA3-API kütüphaneleri kullanılarak oluşturulan bir elektronik imza uygulaması.
+gelecex-signer projesi birden fazla modulden olusan vefarkli modullerin imzalamada farkli islemleri ustlendigi bir projedir. 
 
-#### Tubitak MA3-API kütüphaneleri;
-Tubitak MA3 (Milli Açık Anahtar Altyapısı) kütüphaneleri proje içerisindeki lib klasörü altında bulunmaktadır. 
-Tubitak MA3 kütüphanelerinin güncel versiyonları http://yazilim.kamusm.gov.tr adresinden indirilebilir.
+* signerx-common
+* signerx-utils
+* signerx-smartcard
+* signerx-cades
+* signerx-xades
+* signerx-pades
+* signerx-verification
 
-#### Tubitak MA3-API Kütüphanelerini Local Maven Repository Eklemek
+## signerx-common
+signerx-common modulu, model yapisinda basit duzeyde islemlerin yapildigi siniflari icermektedir.
 
-`mvn install:install-file -Dfile=<jar-dosya-yolu> -DgroupId=<group-id> -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=jar`
+## signerx-utils
+signerx-util modulu, teknik olarak projeye altyapi saglayacak islemlerin yapildigi (orn. hashing, I/O, converting) siniflari icermektedir.
 
-Örnek: 
+## signerx-smartcard
+signerx-smartcard modulu, PKCS#11 yapisini kullanarak akilli kartlar ve HSM cihazlarina baglanti saglanmasi icin gerekli siniflari icermektedir.
 
-`mvn install:install-file -Dfile=akiscif-2.5.4.jar -DgroupId=tr.gov.tubitak.bilgem.uekae.akis -DartifactId=akiscif -Dversion=2.5.6 -Dpackaging=jar`
+## signerx-cades
+signerx-cades modulu, cades ES_BES'ten baslayarak, ES_A tipine kadar imza atabilen kodlari icermektedir.
 
-`mvn install:install-file -Dfile=ma3api-asn-2.1.8.jar -DgroupId=tr.gov.tubitak.uekae.esya.api -DartifactId=ma3api-asn -Dversion=2.1.8 -Dpackaging=jar`
+## signerx-pades
+signerx-pades modulu, pades BES'ten LTV tipine kadar imza atabilen kodlari icermektedir.
+
+## signerx-xades
+signerx-xades modulu, xades ES_BES'ten ES_A tipine kadar imza atabilen kodlari icermektedir.
+
+## signerx-verification
+signerx-verfication modulu, imzanin dogrulama sonuclarini hesaplayan kodlari icermektedir.
+
+## signerx-encryption
+signerx-encryption modulu, simetrik sifreleme islemlerinin yapildigi kodlari icermektedir.
