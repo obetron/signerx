@@ -12,5 +12,12 @@
         <version>0.0.1</version>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.gelecex.signerx</groupId>
+            <artifactId>signerx-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
 </project>
