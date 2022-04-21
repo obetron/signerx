@@ -449,6 +449,8 @@ www-test/
 /.idea/misc.xml
 /.idea/vcs.xml
 .idea/*
+/.vscode
+.vscode/*
 src/main/java/com/gelecex/smartcard/GelecexSmartcard.java
 src/main/java/com/gelecex/smartcard/controller/SmartcardController.java
 src/main/java/com/gelecex/smartcard/enums/GelecexDigestAlg.java
