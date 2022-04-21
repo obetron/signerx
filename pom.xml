@@ -21,9 +21,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.2</junit.version>
         <slf4j.version>1.6.6</slf4j.version>
         <sqlite.version>3.7.2</sqlite.version>
+        <log4j.version>2.17.2</log4j.version>
     </properties>
 
     <dependencies>
@@ -47,9 +48,9 @@
         </dependency>
         <!--Log4j-->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
     </dependencies>
 </project>
