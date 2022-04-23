@@ -1,4 +1,4 @@
-# glcx-signerx
+# signerx
 gelecex-signer projesi birden fazla modulden olusan vefarkli modullerin imzalamada farkli islemleri ustlendigi bir projedir. 
 
 * signerx-cades
