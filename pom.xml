@@ -11,6 +11,7 @@
 
     <modules>
         <module>signerx-common</module>
+        <module>signerx-utils</module>
         <module>signerx-cades</module>
         <module>signerx-pades</module>
         <module>signerx-xades</module>
