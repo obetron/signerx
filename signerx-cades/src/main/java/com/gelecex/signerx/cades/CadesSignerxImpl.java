@@ -3,8 +3,7 @@ package com.gelecex.signerx.cades;
 import com.gelecex.signerx.common.EnumSignatureType;
 
 /**
- * @author obetron
- * created on 21.04.2022
+ * Created by obetron on 21.04.2022
  */
 
 public class CadesSignerxImpl implements CadesSignerx {
