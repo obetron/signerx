@@ -1,7 +1,14 @@
 package com.gelecex.signerx.utils;
 
+import com.gelecex.signerx.common.exception.SignerxException;
+import com.gelecex.signerx.common.smartcard.SmartcardType;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by obetron on 24.04.2022
@@ -16,9 +23,9 @@ public class SCDatabaseTest {
     }
 
     @Test
-    public void testReadXmlFile() {
-        scDatabase.readXmlFile();
+    public void testGetSmartcardDetailListNotNull() throws SignerxException, ParserConfigurationException, IOException, SAXException {
+        scDatabase = new SCDatabase();
+        List<SmartcardType> smartcardTypeList = scDatabase.readSmarcardDatabaseXml();
+        System.out.println(smartcardTypeList);
     }
-
-
 }
