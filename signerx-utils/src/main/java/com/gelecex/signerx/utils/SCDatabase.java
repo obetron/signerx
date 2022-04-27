@@ -34,8 +34,14 @@ public class SCDatabase extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        if("smartcard-config".equalsIgnoreCase(qName)) {
+            smartcardTypeList = new ArrayList<>();
+        }
         if(qName.equalsIgnoreCase("card-type")) {
             smartcardType = new SmartcardType();
+            if(attributes != null && attributes.getLength() > 0) {
+                smartcardType.setName(attributes.getValue("name"));
+            }
             smartcardLibrayList = new ArrayList<>();
             smartcardAtrList = new ArrayList<>();
         }
@@ -44,7 +50,8 @@ public class SCDatabase extends DefaultHandler {
             if(attributes.getLength() > 0) {
                 if(attributes.getValue("name") != null) {
                     smartcardLibrary.setName(attributes.getValue("name"));
-                } else if (attributes.getValue("arch") != null) {
+                }
+                if (attributes.getValue("arch") != null) {
                     smartcardLibrary.setArch(attributes.getValue("arch"));
                 }
             }
@@ -64,10 +71,9 @@ public class SCDatabase extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if("card-type".equalsIgnoreCase(qName)) {
             smartcardType.setAtrList(smartcardAtrList);
+            smartcardType.setLibraryList(smartcardLibrayList);
             smartcardTypeList.add(smartcardType);
             smartcardType = new SmartcardType();
-            smartcardLibrayList = new ArrayList<>();
-            smartcardAtrList = new ArrayList<>();
         }
     }
 }

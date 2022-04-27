@@ -4,7 +4,7 @@ import com.gelecex.signerx.exception.SignerxXMLParserException;
 import com.gelecex.signerx.model.Smartcard;
 import com.gelecex.signerx.utils.GelecexUtils;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class SmartcardServiceImpl implements SmartcardService {
 
-    private Logger LOGGER = Logger.getLogger(SmartcardServiceImpl.class);
+//    private Logger LOGGER = Logger.getLogger(SmartcardServiceImpl.class);
 
     @Override
     public List<Smartcard> readSmartcardToken() throws CardException, SignerxXMLParserException {
@@ -38,10 +38,10 @@ public class SmartcardServiceImpl implements SmartcardService {
                         smartcardList.add(smartcard);
                     }
                 } else {
-                    LOGGER.error("Smartcard ATR value could not read! - " + cardTerminal.getName());
+//                    LOGGER.error("Smartcard ATR value could not read! - " + cardTerminal.getName());
                 }
             } catch(CardNotPresentException e) {
-                LOGGER.debug("No plugged card found for installed smartcard driver!");
+//                LOGGER.debug("No plugged card found for installed smartcard driver!");
                 continue;
             }
         }
