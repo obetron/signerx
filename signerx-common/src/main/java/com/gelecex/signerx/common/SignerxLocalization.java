@@ -1,6 +1,9 @@
 package com.gelecex.signerx.common;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -25,8 +28,21 @@ public class SignerxLocalization {
 
     private static String getMessage(String msg, String type) {
         resourceBundle = ResourceBundle.getBundle(type,
-                new Locale(SignerxUtils.readGelecexConfigFile("gelecex.lang")));
+                new Locale(readGelecexConfigFile("gelecex.lang")));
         message = resourceBundle.getString(msg);
         return message;
+    }
+
+    private static String readGelecexConfigFile(String key) {
+        try {
+            Properties properties = new Properties();
+            properties.load(SignerxLocalization.class.getResourceAsStream("/gelecex_config.properties"));
+            return properties.getProperty(key);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

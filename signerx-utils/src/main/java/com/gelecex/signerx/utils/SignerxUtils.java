@@ -1,12 +1,10 @@
-package com.gelecex.signerx.common;
+package com.gelecex.signerx.utils;
 
+import com.gelecex.signerx.common.EnumHashAlgorithm;
 import com.gelecex.signerx.common.exception.SignerxException;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
 
 /**
  * Created by obetron on 27.04.2022
@@ -43,18 +41,4 @@ public class SignerxUtils {
         }
         return sb.toString().toUpperCase();
     }
-
-    public static String readGelecexConfigFile(String key) {
-        try {
-            Properties properties = new Properties();
-            properties.load(SignerxUtils.class.getResourceAsStream("/gelecex_config.properties"));
-            return properties.getProperty(key);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 }

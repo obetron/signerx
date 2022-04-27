@@ -16,6 +16,7 @@
         <module>signerx-pades</module>
         <module>signerx-xades</module>
         <module>signerx-verification</module>
+        <module>signerx-smartcard</module>
     </modules>
 
     <properties>
