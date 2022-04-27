@@ -7,13 +7,13 @@ import java.util.List;
  */
 public class SmartcardAtr {
 
-    private String atr;
+    private String value;
 
-    public String getAtr() {
-        return atr;
+    public String getValue() {
+        return value;
     }
 
-    public void setAtr(String atr) {
-        this.atr = atr;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

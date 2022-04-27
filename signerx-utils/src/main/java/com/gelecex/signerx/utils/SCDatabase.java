@@ -61,7 +61,7 @@ public class SCDatabase extends DefaultHandler {
             smartcardType.setLibraryList(smartcardLibrayList);
             SmartcardAtr smartcardAtr = new SmartcardAtr();
             if(attributes != null && attributes.getLength() > 0 && attributes.getValue("value") != null) {
-                smartcardAtr.setAtr(attributes.getValue("value"));
+                smartcardAtr.setValue(attributes.getValue("value"));
             }
             smartcardAtrList.add(smartcardAtr);
         }
