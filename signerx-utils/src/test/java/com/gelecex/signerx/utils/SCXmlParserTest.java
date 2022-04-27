@@ -16,14 +16,14 @@ import java.util.List;
 /**
  * Created by obetron on 24.04.2022
  */
-public class SCDatabaseTest {
+public class SCXmlParserTest {
 
-    private SCDatabase scDatabase;
+    private SCXmlParser scDatabase;
     private List<SmartcardType> smartcardTypeList;
 
     @Before
     public void init() throws ParserConfigurationException, IOException, SAXException {
-        scDatabase = new SCDatabase();
+        scDatabase = new SCXmlParser();
         smartcardTypeList = scDatabase.readSmarcardDatabaseXml();
     }
 

@@ -1,17 +1,12 @@
 package com.gelecex.signerx.service;
 
-import com.gelecex.signerx.exception.SignerxXMLParserException;
+import com.gelecex.signerx.common.SignerxUtils;
 import com.gelecex.signerx.model.Smartcard;
-import com.gelecex.signerx.utils.GelecexUtils;
+import org.xml.sax.SAXException;
 
-//import org.apache.log4j.Logger;
-
-import javax.smartcardio.Card;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CardNotPresentException;
-import javax.smartcardio.CardTerminal;
-import javax.smartcardio.CardTerminals;
-import javax.smartcardio.TerminalFactory;
+import javax.smartcardio.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +18,7 @@ public class SmartcardServiceImpl implements SmartcardService {
 //    private Logger LOGGER = Logger.getLogger(SmartcardServiceImpl.class);
 
     @Override
-    public List<Smartcard> readSmartcardToken() throws CardException, SignerxXMLParserException {
+    public List<Smartcard> readSmartcardToken() throws CardException, ParserConfigurationException, IOException, SAXException {
         TerminalFactory terminalFactory = TerminalFactory.getDefault();
         CardTerminals cardTerminals = terminalFactory.terminals();
         List<Smartcard> smartcardList = new ArrayList<>();
@@ -31,7 +26,7 @@ public class SmartcardServiceImpl implements SmartcardService {
             try {
                 Card card = cardTerminal.connect("*");
                 if(card.getATR() != null) {
-                    String atrValue = GelecexUtils.byteToHex(card.getATR().getBytes());
+                    String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
                     SmartcardDao smartcardDao = new SmartcardXMLImpl();
                     Smartcard smartcard = smartcardDao.getSmartcard(atrValue);
                     if (smartcard != null) {

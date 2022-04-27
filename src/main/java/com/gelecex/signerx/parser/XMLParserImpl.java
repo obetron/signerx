@@ -1,8 +1,5 @@
 package com.gelecex.signerx.parser;
 
-import com.gelecex.signerx.exception.SignerxXMLParserException;
-import com.gelecex.signerx.utils.SignerxLocalization;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,20 +18,12 @@ import java.io.InputStream;
 public class XMLParserImpl implements XMLParser {
 
     @Override
-    public Document getXmlDocument(InputStream configStream) throws SignerxXMLParserException {
-        try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dbBuilder = dbFactory.newDocumentBuilder();
-            Document document = dbBuilder.parse(configStream);
-            document.getDocumentElement().normalize();
-            return document;
-        } catch (ParserConfigurationException e) {
-            throw new SignerxXMLParserException(SignerxLocalization.getErrorMessage("errorCreatingDocumentBuilder"), e);
-        } catch (SAXException e) {
-            throw new SignerxXMLParserException(SignerxLocalization.getErrorMessage("errorParsingStreamToDocument"), e);
-        } catch (IOException e) {
-            throw new SignerxXMLParserException(SignerxLocalization.getErrorMessage("errorIOStream"), e);
-        }
+    public Document getXmlDocument(InputStream configStream) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dbBuilder = dbFactory.newDocumentBuilder();
+        Document document = dbBuilder.parse(configStream);
+        document.getDocumentElement().normalize();
+        return document;
     }
 
     @Override

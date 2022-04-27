@@ -1,7 +1,6 @@
-package com.gelecex.signerx.utils;
+package com.gelecex.signerx.common;
 
-import com.gelecex.signerx.enums.SignerxDigestAlg;
-import com.gelecex.signerx.exception.SignerxException;
+import com.gelecex.signerx.common.exception.SignerxException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,21 +9,21 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 
 /**
- * Created by obetron on 18.11.2018
+ * Created by obetron on 27.04.2022
  */
-public class GelecexUtils {
+public class SignerxUtils {
 
     public static byte[] calculateHash(byte[] val, String digestAlg) throws SignerxException {
         if(digestAlg.equals("SHA256") || digestAlg.equals("SHA-256")) {
-            return calculateHash(val, SignerxDigestAlg.SHA256);
+            return calculateHash(val, EnumHashAlgorithm.SHA256);
         } else if(digestAlg.equals("SHA512") || digestAlg.equals("SHA-512")) {
-            return calculateHash(val, SignerxDigestAlg.SHA512);
+            return calculateHash(val, EnumHashAlgorithm.SHA512);
         } else {
             throw new SignerxException("Desteklenmeyen Ozet Algoritması Hatası!!!");
         }
     }
 
-    public static byte[] calculateHash(byte[] val, SignerxDigestAlg gelecexDigestAlg) throws SignerxException {
+    public static byte[] calculateHash(byte[] val, EnumHashAlgorithm gelecexDigestAlg) throws SignerxException {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(gelecexDigestAlg.toString());
             return messageDigest.digest(val);
@@ -48,7 +47,7 @@ public class GelecexUtils {
     public static String readGelecexConfigFile(String key) {
         try {
             Properties properties = new Properties();
-            properties.load(GelecexUtils.class.getResourceAsStream("/gelecex_config.properties"));
+            properties.load(SignerxUtils.class.getResourceAsStream("/gelecex_config.properties"));
             return properties.getProperty(key);
         } catch (FileNotFoundException e) {
             e.printStackTrace();

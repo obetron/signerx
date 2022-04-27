@@ -1,16 +1,17 @@
 package com.gelecex.signerx.service;
 
-import com.gelecex.signerx.exception.SignerxXMLParserException;
-import com.gelecex.signerx.model.SmartcardLibrary;
-import com.gelecex.signerx.parser.XMLParserImpl;
 import com.gelecex.signerx.model.Smartcard;
+import com.gelecex.signerx.model.SmartcardLibrary;
 import com.gelecex.signerx.parser.XMLParser;
-
+import com.gelecex.signerx.parser.XMLParserImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class SmartcardXMLImpl implements SmartcardDao {
     }
 
     @Override
-    public Smartcard getSmartcard(String atrValue) throws SignerxXMLParserException {
+    public Smartcard getSmartcard(String atrValue) throws ParserConfigurationException, IOException, SAXException {
         Document doc = getDocumentFromProperties();
         Element element = doc.getDocumentElement();
         NodeList nodeList = xmlParser.getTagFromNode(element, "card-type");
@@ -56,7 +57,7 @@ public class SmartcardXMLImpl implements SmartcardDao {
     }
 
     @Override
-    public List<Smartcard> getSmartcardList() throws SignerxXMLParserException {
+    public List<Smartcard> getSmartcardList() throws ParserConfigurationException, IOException, SAXException {
         Document doc = getDocumentFromProperties();
         Element element = doc.getDocumentElement();
         NodeList cardTypeNodeList = xmlParser.getTagFromNode(element, "card-type");
@@ -68,7 +69,7 @@ public class SmartcardXMLImpl implements SmartcardDao {
         return smartcardList;
     }
 
-    private Document getDocumentFromProperties() throws SignerxXMLParserException {
+    private Document getDocumentFromProperties() throws ParserConfigurationException, IOException, SAXException {
         xmlParser = new XMLParserImpl();
         InputStream smartcardConfigStream = SmartcardXMLImpl.class.getResourceAsStream("/smartcard-config.xml");
         Document doc = xmlParser.getXmlDocument(smartcardConfigStream);

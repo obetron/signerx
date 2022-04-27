@@ -1,4 +1,4 @@
-package com.gelecex.signerx.utils;
+package com.gelecex.signerx.common;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -25,7 +25,7 @@ public class SignerxLocalization {
 
     private static String getMessage(String msg, String type) {
         resourceBundle = ResourceBundle.getBundle(type,
-                new Locale(GelecexUtils.readGelecexConfigFile("gelecex.lang")));
+                new Locale(SignerxUtils.readGelecexConfigFile("gelecex.lang")));
         message = resourceBundle.getString(msg);
         return message;
     }

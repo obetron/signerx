@@ -1,8 +1,5 @@
 package com.gelecex.signerx.parser;
 
-import com.gelecex.signerx.exception.SignerxXMLParserException;
-import com.gelecex.signerx.parser.XMLParserImpl;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +7,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -24,7 +24,7 @@ public class XmlConfigFileParserTest {
     private Element element;
 
     @Before
-    public void init() throws SignerxXMLParserException {
+    public void init() throws ParserConfigurationException, IOException, SAXException {
         configFile = XmlConfigFileParserTest.class.getResourceAsStream("/smartcard-config.xml");
         xmlParser = new XMLParserImpl();
         doc = xmlParser.getXmlDocument(configFile);

@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by obetron on 24.04.2022
  */
-public class SCDatabase extends DefaultHandler {
+public class SCXmlParser extends DefaultHandler {
 
     private SmartcardType smartcardType;
     private List<SmartcardType> smartcardTypeList;
