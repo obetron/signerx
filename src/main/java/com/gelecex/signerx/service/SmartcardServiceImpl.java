@@ -1,7 +1,7 @@
 package com.gelecex.signerx.service;
 
-import com.gelecex.signerx.common.SignerxUtils;
 import com.gelecex.signerx.model.Smartcard;
+import com.gelecex.signerx.utils.SignerxUtils;
 import org.xml.sax.SAXException;
 
 import javax.smartcardio.*;
