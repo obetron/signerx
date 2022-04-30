@@ -8,27 +8,35 @@ import com.gelecex.signerx.common.exception.SignerxException;
 import com.gelecex.signerx.utils.SignerxUtils;
 
 import javax.smartcardio.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SmartcardManagerImpl implements SmartcardManager {
 
     @Override
-    public String getAtrFromSmartcard() throws SignerxException {
+    public void detectSmartcards() throws SignerxException {
+        List<String> smartcardAtrList = getAtrFromSmartcards();
+    }
+
+    private List<String> getAtrFromSmartcards() throws SignerxException {
         try {
+            List<String> smartcardAtrList = new ArrayList<>();
             TerminalFactory terminalFactory = TerminalFactory.getDefault();
             CardTerminals terminals = terminalFactory.terminals();
             List<CardTerminal> cardTerminalList = terminals.list();
-            Card card = cardTerminalList.get(0).connect("T0");
-            ATR atr = card.getATR();
-            byte[] atrBytes = atr.getBytes();
-            return SignerxUtils.byteToHex(atrBytes);
+            for (CardTerminal cardTerminal : cardTerminalList) {
+                Card card = cardTerminal.connect("T0");
+                ATR atr = card.getATR();
+                byte[] atrBytes = atr.getBytes();
+                smartcardAtrList.add(SignerxUtils.byteToHex(atrBytes));
+            }
+            return smartcardAtrList;
         } catch (CardException e) {
             throw new SignerxException("Terminal listesi alinirken hata olustu!", e);
         }
     }
 
-    @Override
-    public void detectSmartcardLib(String atrValue) throws SignerxException {
+    private void detectSmartcardLib(String atrValue) throws SignerxException {
 
     }
 }

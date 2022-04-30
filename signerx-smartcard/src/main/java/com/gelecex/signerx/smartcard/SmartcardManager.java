@@ -7,7 +7,6 @@ import com.gelecex.signerx.common.exception.SignerxException;
  */
 public interface SmartcardManager {
 
-    String getAtrFromSmartcard() throws SignerxException;
-    void detectSmartcardLib(String atrValue) throws SignerxException;
+    void detectSmartcards() throws SignerxException;
 
 }
