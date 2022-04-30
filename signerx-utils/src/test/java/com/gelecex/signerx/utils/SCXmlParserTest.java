@@ -22,7 +22,7 @@ public class SCXmlParserTest {
     private List<SmartcardType> smartcardTypeList;
 
     @Before
-    public void init() throws ParserConfigurationException, IOException, SAXException {
+    public void init() throws SignerxException {
         scDatabase = new SCXmlParser();
         smartcardTypeList = scDatabase.readSmarcardDatabaseXml();
     }
