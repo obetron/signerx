@@ -7,6 +7,7 @@ package com.gelecex.signerx.smartcard;
 import com.gelecex.signerx.common.EnumOsArch;
 import com.gelecex.signerx.common.EnumOsName;
 import com.gelecex.signerx.common.exception.SignerxException;
+import com.gelecex.signerx.common.smartcard.SignerxSmartcard;
 import com.gelecex.signerx.common.smartcard.SmartcardAtr;
 import com.gelecex.signerx.common.smartcard.SmartcardLibrary;
 import com.gelecex.signerx.common.smartcard.SmartcardType;
@@ -24,8 +25,19 @@ public class SmartcardManagerImpl implements SmartcardManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SmartcardManagerImpl.class);
 
     @Override
-    public void detectSmartcards() throws SignerxException {
-
+    public List<SignerxSmartcard> getPluggedSmartcardList() throws SignerxException {
+        List<SignerxSmartcard> signerxSmartcardList = new ArrayList<>();
+        try {
+            TerminalFactory terminalFactory = TerminalFactory.getDefault();
+            CardTerminals cardTerminals = terminalFactory.terminals();
+            List<CardTerminal> cardTerminalList = cardTerminals.list();
+            for (CardTerminal cardTerminal : cardTerminalList) {
+                //TODO: smarcard icerisindeki sertifikalari ceken kod eklenecek.
+            }
+        } catch (CardException e) {
+            throw new SignerxException("Sistemde takili olan terminaller alinirken hata olustu!", e);
+        }
+        return signerxSmartcardList;
     }
 
     private List<String> getAtrFromSmartcards() throws SignerxException {
@@ -48,11 +60,10 @@ public class SmartcardManagerImpl implements SmartcardManager {
 
     private String detectSmartcardLib(String atrValue) throws SignerxException {
         List<SmartcardLibrary> smartcardLibraryList = getSmartcardLibraryList(atrValue);
-        if(smartcardLibraryList.size() > 0) {
+        if(smartcardLibraryList.size() > 1) {
+            EnumOsArch osArch = detectSystemArch();
             for (SmartcardLibrary smartcardLibrary : smartcardLibraryList) {
-                if(EnumOsArch.x32.toString().equalsIgnoreCase(smartcardLibrary.getArch())) {
-                    return smartcardLibrary.getName();
-                } else if(EnumOsArch.x64.toString().equalsIgnoreCase(smartcardLibrary.getArch())) {
+                if(osArch.toString().equalsIgnoreCase(smartcardLibrary.getArch())) {
                     return smartcardLibrary.getName();
                 }
             }
@@ -68,7 +79,8 @@ public class SmartcardManagerImpl implements SmartcardManager {
         for (SmartcardType smartcardType : smartcardTypeList) {
             List<SmartcardAtr> atrList = smartcardType.getAtrList();
             for (SmartcardAtr smartcardAtr : atrList) {
-                if(smartcardAtr.getValue().equalsIgnoreCase(atrValue)) {
+                if(smartcardAtr.getValue().equalsIgnoreCase(atrValue))
+                {
                     return smartcardType.getLibraryList();
                 }
             }
@@ -86,7 +98,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
         return EnumOsArch.x32;
     }
 
-    private String detectLibraryExtension() throws SignerxException {
+    private String getSystemExtension() throws SignerxException {
         String osName = System.getProperty("os.name");
         if (osName.contains(EnumOsName.Windows.name())) {
             return ".dll";
