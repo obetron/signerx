@@ -15,8 +15,12 @@ import com.gelecex.signerx.utils.SCXmlParser;
 import com.gelecex.signerx.utils.SignerxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.security.pkcs11.wrapper.PKCS11;
+import sun.security.pkcs11.wrapper.PKCS11Constants;
+import sun.security.pkcs11.wrapper.PKCS11Exception;
 
 import javax.smartcardio.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +36,32 @@ public class SmartcardManagerImpl implements SmartcardManager {
             CardTerminals cardTerminals = terminalFactory.terminals();
             List<CardTerminal> cardTerminalList = cardTerminals.list();
             for (CardTerminal cardTerminal : cardTerminalList) {
-                //TODO: smarcard icerisindeki sertifikalari ceken kod eklenecek.
+                Card card = cardTerminal.connect("*");
+                String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
+                String libName = detectSmartcardLib(atrValue);
+                String staticMacLibPath = "/usr/local/lib/lib" +libName + getSystemExtension();
+                connectToSmartcard(staticMacLibPath);
+            }
+            if(cardTerminalList.size() == 0) {
+                LOGGER.warn("Bilgisayarda takili akilli kart bulunamadi!");
             }
         } catch (CardException e) {
             throw new SignerxException("Sistemde takili olan terminaller alinirken hata olustu!", e);
         }
         return signerxSmartcardList;
+    }
+
+    private void connectToSmartcard(String smartcardLibPath) {
+        try {
+            PKCS11 pkcs11 = PKCS11.getInstance(smartcardLibPath, "C_GetFunctionList", null, false);
+            long session = pkcs11.C_OpenSession(0, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
+            System.out.println("Session: " + session);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (PKCS11Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private List<String> getAtrFromSmartcards() throws SignerxException {
@@ -50,7 +74,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
                 Card card = cardTerminal.connect("T0");
                 ATR atr = card.getATR();
                 byte[] atrBytes = atr.getBytes();
-                smartcardAtrList.add(SignerxUtils.byteToHex(atrBytes));
+                smartcardAtrList.add( SignerxUtils.byteToHex(atrBytes));
             }
             return smartcardAtrList;
         } catch (CardException e) {
