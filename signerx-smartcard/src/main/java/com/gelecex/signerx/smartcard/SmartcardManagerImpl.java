@@ -21,6 +21,7 @@ import sun.security.pkcs11.wrapper.PKCS11Exception;
 
 import javax.smartcardio.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
                 Card card = cardTerminal.connect("*");
                 String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
                 String libName = detectSmartcardLib(atrValue);
-                String staticMacLibPath = "/usr/local/lib/lib" +libName + getSystemExtension();
+                String staticMacLibPath = "/Users/erenbasaran/IdeaProjects/signerx/signerx-smartcard/src/main/resources/" +libName + getSystemExtension();
                 connectToSmartcard(staticMacLibPath);
             }
             if(cardTerminalList.size() == 0) {
