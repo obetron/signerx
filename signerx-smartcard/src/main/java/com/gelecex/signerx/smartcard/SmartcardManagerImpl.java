@@ -31,18 +31,25 @@ public class SmartcardManagerImpl implements SmartcardManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SmartcardManagerImpl.class);
 
+    static{
+        String osName = System.getProperty("os.name");
+        if(osName.contains(EnumOsName.Mac.name())) {
+            System.setProperty("sun.security.smartcardio.library", "/System/Library/Frameworks/PCSC.framework/Versions/Current/PCSC");
+        }
+    }
+
     @Override
     public List<SignerxSmartcard> getPluggedSmartcardList() throws SignerxException {
         List<SignerxSmartcard> signerxSmartcardList = new ArrayList<>();
         try {
             TerminalFactory terminalFactory = TerminalFactory.getDefault();
             CardTerminals cardTerminals = terminalFactory.terminals();
-            List<CardTerminal> cardTerminalList = cardTerminals.list();
+            List<CardTerminal> cardTerminalList = cardTerminals.list(CardTerminals.State.CARD_PRESENT);
             for (CardTerminal cardTerminal : cardTerminalList) {
                 Card card = cardTerminal.connect("*");
                 String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
                 String libName = detectSmartcardLib(atrValue);
-                String staticMacLibPath = "/Users/erenbasaran/IdeaProjects/signerx/signerx-smartcard/src/main/resources/" +libName + getSystemExtension();
+                String staticMacLibPath = "/Users/erenbasaran/IdeaProjects/signerx/signerx-smartcard/src/main/resources/lib" + libName + getSystemExtension();
                 connectToSmartcard(staticMacLibPath);
             }
             if(cardTerminalList.size() == 0) {
@@ -57,14 +64,13 @@ public class SmartcardManagerImpl implements SmartcardManager {
     private void connectToSmartcard(String smartcardLibPath) {
         try {
             PKCS11 pkcs11 = PKCS11.getInstance(smartcardLibPath, "C_GetFunctionList", null, false);
-            long session = pkcs11.C_OpenSession(0, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
+            long session = pkcs11.C_OpenSession(1, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
             System.out.println("Session: " + session);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (PKCS11Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private List<String> getAtrFromSmartcards() throws SignerxException {

@@ -2,6 +2,7 @@ package com.gelecex.signerx.smartcard;
 
 import com.gelecex.signerx.common.exception.SignerxException;
 import com.gelecex.signerx.common.smartcard.SignerxSmartcard;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class SmartcardManagerTest {
     public void getPluggedSmartcardListTest() throws SignerxException {
         SmartcardManager smartcardManager = new SmartcardManagerImpl();
         List<SignerxSmartcard> pluggedSmartcardList = smartcardManager.getPluggedSmartcardList();
+        Assert.assertTrue(pluggedSmartcardList.size() > 0);
     }
 
 }
