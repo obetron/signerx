@@ -15,6 +15,7 @@ import com.gelecex.signerx.utils.SCXmlParser;
 import com.gelecex.signerx.utils.SignerxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.security.pkcs11.wrapper.CK_SESSION_INFO;
 import sun.security.pkcs11.wrapper.PKCS11;
 import sun.security.pkcs11.wrapper.PKCS11Constants;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
@@ -31,10 +32,12 @@ public class SmartcardManagerImpl implements SmartcardManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SmartcardManagerImpl.class);
 
-    static{
+    static {
         String osName = System.getProperty("os.name");
         if(osName.contains(EnumOsName.Mac.name())) {
             System.setProperty("sun.security.smartcardio.library", "/System/Library/Frameworks/PCSC.framework/Versions/Current/PCSC");
+        } else if(osName.contains(EnumOsName.Windows.name())) {
+            clearSmartcardCache();
         }
     }
 
@@ -64,8 +67,11 @@ public class SmartcardManagerImpl implements SmartcardManager {
     private void connectToSmartcard(String smartcardLibPath) {
         try {
             PKCS11 pkcs11 = PKCS11.getInstance(smartcardLibPath, "C_GetFunctionList", null, false);
-            long session = pkcs11.C_OpenSession(1, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
-            System.out.println("Session: " + session);
+            long[] slots = pkcs11.C_GetSlotList(true);
+            long sessionId = pkcs11.C_OpenSession(slots[0], PKCS11Constants.CKF_SERIAL_SESSION, null, null);
+            CK_SESSION_INFO session_info = pkcs11.C_GetSessionInfo(sessionId);
+            System.out.println(session_info.toString());
+            System.out.println("Session: " + sessionId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (PKCS11Exception e) {
@@ -144,7 +150,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
         }
     }
 
-    private void clearSmartcardCache() {
+    private static void clearSmartcardCache() {
         try {
             Class pcscterminal = null;
             pcscterminal = Class.forName("sun.security.smartcardio.PCSCTerminals");
