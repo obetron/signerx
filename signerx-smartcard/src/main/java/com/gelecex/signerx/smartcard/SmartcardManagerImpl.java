@@ -48,12 +48,13 @@ public class SmartcardManagerImpl implements SmartcardManager {
             TerminalFactory terminalFactory = TerminalFactory.getDefault();
             CardTerminals cardTerminals = terminalFactory.terminals();
             List<CardTerminal> cardTerminalList = cardTerminals.list(CardTerminals.State.CARD_PRESENT);
+            int slotCounter = 0;
             for (CardTerminal cardTerminal : cardTerminalList) {
                 Card card = cardTerminal.connect("*");
                 String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
-                String libName = detectSmartcardLib(atrValue);
-                String staticMacLibPath = "/Users/erenbasaran/IdeaProjects/signerx/signerx-smartcard/src/main/resources/lib" + libName + getSystemExtension();
-                connectToSmartcard(staticMacLibPath);
+                String libPath = SmartcardManagerImpl.class.getClassLoader().getResource(getPluggedSmartcardLibName(atrValue)).getPath();
+                LOGGER.debug("Surucu Kutuphane Yolu: " + libPath);
+                connectToSmartcard(libPath, slotCounter++);
             }
             if(cardTerminalList.size() == 0) {
                 LOGGER.warn("Bilgisayarda takili akilli kart bulunamadi!");
@@ -64,18 +65,18 @@ public class SmartcardManagerImpl implements SmartcardManager {
         return signerxSmartcardList;
     }
 
-    private void connectToSmartcard(String smartcardLibPath) {
+    private void connectToSmartcard(String smartcardLibPath, int slotCounter) throws SignerxException {
         try {
             PKCS11 pkcs11 = PKCS11.getInstance(smartcardLibPath, "C_GetFunctionList", null, false);
             long[] slots = pkcs11.C_GetSlotList(true);
-            long sessionId = pkcs11.C_OpenSession(slots[0], PKCS11Constants.CKF_SERIAL_SESSION, null, null);
+            long sessionId = pkcs11.C_OpenSession(slots[slotCounter], PKCS11Constants.CKF_SERIAL_SESSION, null, null);
             CK_SESSION_INFO session_info = pkcs11.C_GetSessionInfo(sessionId);
-            System.out.println(session_info.toString());
-            System.out.println("Session: " + sessionId);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.debug("Session Info: " + session_info.toString());
+            LOGGER.debug("Session Id: " + sessionId);
         } catch (PKCS11Exception e) {
-            throw new RuntimeException(e);
+            throw new SignerxException("PKCS11 islemleri sirasinda bir hata olustu!", e);
+        } catch (IOException e) {
+            throw new SignerxException("Surucu kutuphanesi kullanilarak PKCS11 nesnesi olusturulurken hata olustu!", e);
         }
     }
 
@@ -127,6 +128,16 @@ public class SmartcardManagerImpl implements SmartcardManager {
         LOGGER.error("ATR Degeri: " + atrValue + " - degeri icin kayit bulunamadi!");
         LOGGER.error("ATR degerini elle scdatabase.xml dosyasina ekleyebilirsiniz!");
         return null;
+    }
+
+    private String getPluggedSmartcardLibName(String atrValue) throws SignerxException {
+        String osName = System.getProperty("os.name");
+        String libName = detectSmartcardLib(atrValue);
+        if(osName.contains(EnumOsName.Mac.name())) {
+            return "lib" + libName + getSystemExtension();
+        } else {
+            return libName + getSystemExtension();
+        }
     }
 
     private EnumOsArch detectSystemArch() {
@@ -183,16 +194,8 @@ public class SmartcardManagerImpl implements SmartcardManager {
 
                 clearMap.invoke(fieldTerminals.get(terminals));
             }
-        } catch(ClassNotFoundException e){
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch(ClassNotFoundException | NoSuchFieldException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e){
+            LOGGER.error("Window isletim sistemi icin smartcard sinifi cache temizligi sirasinda hata meydana geldi!", e);
         }
     }
 }
