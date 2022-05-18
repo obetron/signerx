@@ -52,7 +52,8 @@ public class SmartcardManagerImpl implements SmartcardManager {
             for (CardTerminal cardTerminal : cardTerminalList) {
                 Card card = cardTerminal.connect("*");
                 String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
-                String libPath = SmartcardManagerImpl.class.getClassLoader().getResource(getPluggedSmartcardLibName(atrValue)).getPath();
+                String libName = getPluggedSmartcardLibName(atrValue);
+                String libPath = SmartcardManagerImpl.class.getClassLoader().getResource(libName).getPath();
                 LOGGER.debug("Surucu Kutuphane Yolu: " + libPath);
                 connectToSmartcard(libPath, slotCounter++);
             }
@@ -133,7 +134,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
     private String getPluggedSmartcardLibName(String atrValue) throws SignerxException {
         String osName = System.getProperty("os.name");
         String libName = detectSmartcardLib(atrValue);
-        if(osName.contains(EnumOsName.Mac.name())) {
+        if(osName.contains(EnumOsName.Mac.name()) || osName.contains(EnumOsName.Linux.name())) {
             return "lib" + libName + getSystemExtension();
         } else {
             return libName + getSystemExtension();
