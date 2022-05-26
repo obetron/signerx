@@ -15,10 +15,7 @@ import com.gelecex.signerx.utils.SCXmlParser;
 import com.gelecex.signerx.utils.SignerxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.pkcs11.wrapper.CK_SESSION_INFO;
-import sun.security.pkcs11.wrapper.PKCS11;
-import sun.security.pkcs11.wrapper.PKCS11Constants;
-import sun.security.pkcs11.wrapper.PKCS11Exception;
+import sun.security.pkcs11.wrapper.*;
 
 import javax.smartcardio.*;
 import java.io.IOException;
@@ -48,17 +45,18 @@ public class SmartcardManagerImpl implements SmartcardManager {
             TerminalFactory terminalFactory = TerminalFactory.getDefault();
             CardTerminals cardTerminals = terminalFactory.terminals();
             List<CardTerminal> cardTerminalList = cardTerminals.list(CardTerminals.State.CARD_PRESENT);
-            int slotCounter = 0;
-            for (CardTerminal cardTerminal : cardTerminalList) {
-                Card card = cardTerminal.connect("*");
-                String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
-                String libName = getPluggedSmartcardLibName(atrValue);
-                String libPath = SmartcardManagerImpl.class.getClassLoader().getResource(libName).getPath();
-                LOGGER.debug("Surucu Kutuphane Yolu: " + libPath);
-                connectToSmartcard(libPath, slotCounter++);
-            }
             if(cardTerminalList.size() == 0) {
                 LOGGER.warn("Bilgisayarda takili akilli kart bulunamadi!");
+            } else {
+                LOGGER.info(cardTerminalList.size() + " adet takili akilli kart tespit edildi.");
+                for (CardTerminal cardTerminal : cardTerminalList) {
+                    Card card = cardTerminal.connect("*");
+                    String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
+                    String libName = getPluggedSmartcardLibName(atrValue);
+                    String libPath = SmartcardManagerImpl.class.getClassLoader().getResource(libName).getPath();
+                    LOGGER.debug("Surucu Kutuphane Yolu: " + libPath);
+                    connectToSmartcard(libPath, cardTerminal.getName());
+                }
             }
         } catch (CardException e) {
             throw new SignerxException("Sistemde takili olan terminaller alinirken hata olustu!", e);
@@ -66,13 +64,25 @@ public class SmartcardManagerImpl implements SmartcardManager {
         return signerxSmartcardList;
     }
 
-    private void connectToSmartcard(String smartcardLibPath, int slotCounter) throws SignerxException {
+    private void connectToSmartcard(String smartcardLibPath, String terminalName) throws SignerxException {
         try {
+            long slotIndex = 1L;
             PKCS11 pkcs11 = PKCS11.getInstance(smartcardLibPath, "C_GetFunctionList", null, false);
-            long[] slots = pkcs11.C_GetSlotList(true);
-            long sessionId = pkcs11.C_OpenSession(slots[slotCounter], PKCS11Constants.CKF_SERIAL_SESSION, null, null);
-            CK_SESSION_INFO session_info = pkcs11.C_GetSessionInfo(sessionId);
-            LOGGER.debug("Session Info: " + session_info.toString());
+            long[] slotList = pkcs11.C_GetSlotList(true);
+            for (long s : slotList) {
+                char NULL_CHAR = '\0';
+                CK_SLOT_INFO slotInfo = pkcs11.C_GetSlotInfo(s);
+                String str = new String(slotInfo.slotDescription).trim();
+                if (str.indexOf(NULL_CHAR) > 0) {
+                    str = str.substring(0, str.indexOf(NULL_CHAR));
+                }
+                if (terminalName.contains(str)) {
+                    slotIndex = s;
+                }
+            }
+            long sessionId = pkcs11.C_OpenSession(slotIndex, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
+            CK_SESSION_INFO sessionInfo = pkcs11.C_GetSessionInfo(sessionId);
+            LOGGER.debug("Session Info: " + sessionInfo.toString());
             LOGGER.debug("Session Id: " + sessionId);
         } catch (PKCS11Exception e) {
             throw new SignerxException("PKCS11 islemleri sirasinda bir hata olustu!", e);
