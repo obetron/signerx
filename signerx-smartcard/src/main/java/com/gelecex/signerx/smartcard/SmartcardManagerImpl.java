@@ -54,12 +54,16 @@ public class SmartcardManagerImpl implements SmartcardManager {
             } else {
                 LOGGER.info(cardTerminalList.size() + " adet takili akilli kart tespit edildi.");
                 for (CardTerminal cardTerminal : cardTerminalList) {
+                    SignerxSmartcard signerxSmartcard = new SignerxSmartcard();
+                    signerxSmartcard.setCardName(cardTerminal.getName());
                     Card card = cardTerminal.connect("*");
                     String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
                     String libName = getPluggedSmartcardLibName(atrValue);
                     String libPath = SmartcardManagerImpl.class.getClassLoader().getResource(libName).getPath();
+                    signerxSmartcard.setCardLibName(libPath);
                     LOGGER.debug("Surucu Kutuphane Yolu: " + libPath);
-                    long session = openSessionOnSmartcard(libPath, cardTerminal.getName());
+                    openSessionOnSmartcard(signerxSmartcard);
+                    signerxSmartcardList.add(signerxSmartcard);
                 }
             }
         } catch (CardException e) {
@@ -68,10 +72,10 @@ public class SmartcardManagerImpl implements SmartcardManager {
         return signerxSmartcardList;
     }
 
-    private long openSessionOnSmartcard(String smartcardLibPath, String terminalName) throws SignerxException {
+    private void openSessionOnSmartcard(SignerxSmartcard signerxSmartcard) throws SignerxException {
         try {
             long slotIndex = 1L;
-            PKCS11 pkcs11 = PKCS11.getInstance(smartcardLibPath, "C_GetFunctionList", null, false);
+            PKCS11 pkcs11 = PKCS11.getInstance(signerxSmartcard.getCardLibName(), "C_GetFunctionList", null, false);
             long[] slotList = pkcs11.C_GetSlotList(true);
             for (long s : slotList) {
                 char NULL_CHAR = '\0';
@@ -80,7 +84,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
                 if (str.indexOf(NULL_CHAR) > 0) {
                     str = str.substring(0, str.indexOf(NULL_CHAR));
                 }
-                if (terminalName.contains(str)) {
+                if (signerxSmartcard.getCardName().contains(str)) {
                     slotIndex = s;
                 }
             }
@@ -88,8 +92,8 @@ public class SmartcardManagerImpl implements SmartcardManager {
             CK_SESSION_INFO sessionInfo = pkcs11.C_GetSessionInfo(sessionId);
             LOGGER.debug("Session Info: " + sessionInfo.toString());
             LOGGER.debug("Session Id: " + sessionId);
-            getSmartcardCertificates(pkcs11, sessionId);
-            return sessionId;
+            List<X509Certificate> certificates = getSmartcardCertificates(pkcs11, sessionId);
+            signerxSmartcard.setCertificateList(certificates);
         } catch (PKCS11Exception e) {
             throw new SignerxException("PKCS11 islemleri sirasinda bir hata olustu!", e);
         } catch (IOException e) {
@@ -99,6 +103,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
 
     private List<X509Certificate> getSmartcardCertificates(PKCS11 pkcs11, long sessionId) throws SignerxException {
         try {
+            List<X509Certificate> certificateList = new ArrayList<>();
             CK_ATTRIBUTE[] ckAttributeTemplates = {CLASS_CERTIFICATE_ATTR, TOKEN_ATTR};
             pkcs11.C_FindObjectsInit(sessionId, ckAttributeTemplates);
             long[] availableCertificates = pkcs11.C_FindObjects(sessionId, 10L);
@@ -114,12 +119,13 @@ public class SmartcardManagerImpl implements SmartcardManager {
                 InputStream certStream = new ByteArrayInputStream(derEncodedCertificate);
                 CertificateFactory factory = CertificateFactory.getInstance("X.509");
                 X509Certificate signerCert = (X509Certificate) factory.generateCertificate(certStream);
-                LOGGER.debug("Sertifika: ", signerCert.getSubjectDN().getName());
+                certificateList.add(signerCert);
+                LOGGER.debug("Sertifika: " + signerCert.getSubjectDN().getName());
             }
+            return certificateList;
         } catch (PKCS11Exception | CertificateException e) {
             throw new SignerxException("Akilli karttan sertifikalar cekilirken hata olustu!", e);
         }
-        return null;
     }
 
     private String detectSmartcardLib(String atrValue) throws SignerxException {
