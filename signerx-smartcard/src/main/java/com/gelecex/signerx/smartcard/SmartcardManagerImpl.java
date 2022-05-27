@@ -18,23 +18,27 @@ import org.slf4j.LoggerFactory;
 import sun.security.pkcs11.wrapper.*;
 
 import javax.smartcardio.*;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SmartcardManagerImpl implements SmartcardManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SmartcardManagerImpl.class);
+    private static CK_ATTRIBUTE CLASS_CERTIFICATE_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_CLASS, PKCS11Constants.CKO_CERTIFICATE);
+    private static CK_ATTRIBUTE TOKEN_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_TOKEN, PKCS11Constants.TRUE);
 
     static {
         String osName = System.getProperty("os.name");
         if(osName.contains(EnumOsName.Mac.name())) {
             System.setProperty("sun.security.smartcardio.library", "/System/Library/Frameworks/PCSC.framework/Versions/Current/PCSC");
         } else if(osName.contains(EnumOsName.Windows.name())) {
-            clearSmartcardCache();
+            SmartcardUtils.clearSmartcardCache();
         }
     }
 
@@ -55,7 +59,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
                     String libName = getPluggedSmartcardLibName(atrValue);
                     String libPath = SmartcardManagerImpl.class.getClassLoader().getResource(libName).getPath();
                     LOGGER.debug("Surucu Kutuphane Yolu: " + libPath);
-                    connectToSmartcard(libPath, cardTerminal.getName());
+                    long session = openSessionOnSmartcard(libPath, cardTerminal.getName());
                 }
             }
         } catch (CardException e) {
@@ -64,7 +68,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
         return signerxSmartcardList;
     }
 
-    private void connectToSmartcard(String smartcardLibPath, String terminalName) throws SignerxException {
+    private long openSessionOnSmartcard(String smartcardLibPath, String terminalName) throws SignerxException {
         try {
             long slotIndex = 1L;
             PKCS11 pkcs11 = PKCS11.getInstance(smartcardLibPath, "C_GetFunctionList", null, false);
@@ -84,6 +88,8 @@ public class SmartcardManagerImpl implements SmartcardManager {
             CK_SESSION_INFO sessionInfo = pkcs11.C_GetSessionInfo(sessionId);
             LOGGER.debug("Session Info: " + sessionInfo.toString());
             LOGGER.debug("Session Id: " + sessionId);
+            getSmartcardCertificates(pkcs11, sessionId);
+            return sessionId;
         } catch (PKCS11Exception e) {
             throw new SignerxException("PKCS11 islemleri sirasinda bir hata olustu!", e);
         } catch (IOException e) {
@@ -91,28 +97,35 @@ public class SmartcardManagerImpl implements SmartcardManager {
         }
     }
 
-    private List<String> getAtrFromSmartcards() throws SignerxException {
+    private List<X509Certificate> getSmartcardCertificates(PKCS11 pkcs11, long sessionId) throws SignerxException {
         try {
-            List<String> smartcardAtrList = new ArrayList<>();
-            TerminalFactory terminalFactory = TerminalFactory.getDefault();
-            CardTerminals terminals = terminalFactory.terminals();
-            List<CardTerminal> cardTerminalList = terminals.list();
-            for (CardTerminal cardTerminal : cardTerminalList) {
-                Card card = cardTerminal.connect("T0");
-                ATR atr = card.getATR();
-                byte[] atrBytes = atr.getBytes();
-                smartcardAtrList.add( SignerxUtils.byteToHex(atrBytes));
+            CK_ATTRIBUTE[] ckAttributeTemplates = {CLASS_CERTIFICATE_ATTR, TOKEN_ATTR};
+            pkcs11.C_FindObjectsInit(sessionId, ckAttributeTemplates);
+            long[] availableCertificates = pkcs11.C_FindObjects(sessionId, 10L);
+            if(availableCertificates == null) {
+                throw new SignerxException("Akilli kart icerisinden sertifikalar alinirken hata olustu!");
             }
-            return smartcardAtrList;
-        } catch (CardException e) {
-            throw new SignerxException("Terminal listesi alinirken hata olustu!", e);
+            for (long availableCertificate : availableCertificates) {
+                CK_ATTRIBUTE[] template = new CK_ATTRIBUTE[1];
+                template[0] = new CK_ATTRIBUTE();
+                template[0].type = PKCS11Constants.CKA_VALUE;
+                pkcs11.C_GetAttributeValue(sessionId, availableCertificate, template);
+                byte[] derEncodedCertificate = (byte[]) template[0].pValue;
+                InputStream certStream = new ByteArrayInputStream(derEncodedCertificate);
+                CertificateFactory factory = CertificateFactory.getInstance("X.509");
+                X509Certificate signerCert = (X509Certificate) factory.generateCertificate(certStream);
+                LOGGER.debug("Sertifika: ", signerCert.getSubjectDN().getName());
+            }
+        } catch (PKCS11Exception | CertificateException e) {
+            throw new SignerxException("Akilli karttan sertifikalar cekilirken hata olustu!", e);
         }
+        return null;
     }
 
     private String detectSmartcardLib(String atrValue) throws SignerxException {
         List<SmartcardLibrary> smartcardLibraryList = getSmartcardLibraryList(atrValue);
         if(smartcardLibraryList.size() > 1) {
-            EnumOsArch osArch = detectSystemArch();
+            EnumOsArch osArch = SmartcardUtils.detectSystemArch();
             for (SmartcardLibrary smartcardLibrary : smartcardLibraryList) {
                 if(osArch.toString().equalsIgnoreCase(smartcardLibrary.getArch())) {
                     return smartcardLibrary.getName();
@@ -130,8 +143,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
         for (SmartcardType smartcardType : smartcardTypeList) {
             List<SmartcardAtr> atrList = smartcardType.getAtrList();
             for (SmartcardAtr smartcardAtr : atrList) {
-                if(smartcardAtr.getValue().equalsIgnoreCase(atrValue))
-                {
+                if(smartcardAtr.getValue().equalsIgnoreCase(atrValue)) {
                     return smartcardType.getLibraryList();
                 }
             }
@@ -145,68 +157,9 @@ public class SmartcardManagerImpl implements SmartcardManager {
         String osName = System.getProperty("os.name");
         String libName = detectSmartcardLib(atrValue);
         if(osName.contains(EnumOsName.Mac.name()) || osName.contains(EnumOsName.Linux.name())) {
-            return "lib" + libName + getSystemExtension();
+            return "lib" + libName + SmartcardUtils.getSystemExtension();
         } else {
-            return libName + getSystemExtension();
-        }
-    }
-
-    private EnumOsArch detectSystemArch() {
-        String osArch = System.getProperty("os.arch");
-        if(osArch.contains("64")) {
-            return EnumOsArch.x64;
-        }
-        return EnumOsArch.x32;
-    }
-
-    private String getSystemExtension() throws SignerxException {
-        String osName = System.getProperty("os.name");
-        if (osName.contains(EnumOsName.Windows.name())) {
-            return ".dll";
-        } else if (osName.contains(EnumOsName.Linux.name())) {
-            return ".so";
-        } else if (osName.contains(EnumOsName.Mac.name())) {
-            return ".dylib";
-        } else {
-            throw new SignerxException("Bilinmeyen isletim sistemi!");
-        }
-    }
-
-    private static void clearSmartcardCache() {
-        try {
-            Class pcscterminal = null;
-            pcscterminal = Class.forName("sun.security.smartcardio.PCSCTerminals");
-            Field contextId = pcscterminal.getDeclaredField("contextId");
-            contextId.setAccessible(true);
-
-            if (contextId.getLong(pcscterminal) != 0L) {
-                // First get a new context value
-                Class pcsc = Class.forName("sun.security.smartcardio.PCSC");
-                Method SCardEstablishContext = pcsc.getDeclaredMethod(
-                        "SCardEstablishContext",
-                        new Class[]{Integer.TYPE}
-                );
-                SCardEstablishContext.setAccessible(true);
-
-                Field SCARD_SCOPE_USER = pcsc.getDeclaredField("SCARD_SCOPE_USER");
-                SCARD_SCOPE_USER.setAccessible(true);
-
-                long newId = ((Long) SCardEstablishContext.invoke(pcsc,
-                        new Object[]{SCARD_SCOPE_USER.getInt(pcsc)}
-                ));
-                contextId.setLong(pcscterminal, newId);
-                // Then clear the terminals in cache
-                TerminalFactory factory = TerminalFactory.getDefault();
-                CardTerminals terminals = factory.terminals();
-                Field fieldTerminals = pcscterminal.getDeclaredField("terminals");
-                fieldTerminals.setAccessible(true);
-                Class classMap = Class.forName("java.util.Map");
-                Method clearMap = classMap.getDeclaredMethod("clear");
-
-                clearMap.invoke(fieldTerminals.get(terminals));
-            }
-        } catch(ClassNotFoundException | NoSuchFieldException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e){
-            LOGGER.error("Window isletim sistemi icin smartcard sinifi cache temizligi sirasinda hata meydana geldi!", e);
+            return libName + SmartcardUtils.getSystemExtension();
         }
     }
 }
