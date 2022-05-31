@@ -1,7 +1,5 @@
 package com.gelecex.signerx.common.smartcard;
 
-import java.util.List;
-
 /**
  * Created by obetron on 26.04.2022
  */
