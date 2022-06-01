@@ -7,10 +7,7 @@ package com.gelecex.signerx.smartcard;
 import com.gelecex.signerx.common.EnumOsArch;
 import com.gelecex.signerx.common.EnumOsName;
 import com.gelecex.signerx.common.exception.SignerxException;
-import com.gelecex.signerx.common.smartcard.SignerxSmartcard;
-import com.gelecex.signerx.common.smartcard.SmartcardAtr;
-import com.gelecex.signerx.common.smartcard.SmartcardLibrary;
-import com.gelecex.signerx.common.smartcard.SmartcardType;
+import com.gelecex.signerx.common.smartcard.*;
 import com.gelecex.signerx.utils.SCXmlParser;
 import com.gelecex.signerx.utils.SignerxUtils;
 import org.slf4j.Logger;
@@ -21,6 +18,8 @@ import javax.smartcardio.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.security.Principal;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -29,9 +28,9 @@ import java.util.List;
 
 public class SmartcardManagerImpl implements SmartcardManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SmartcardManagerImpl.class);
-    private static CK_ATTRIBUTE CLASS_CERTIFICATE_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_CLASS, PKCS11Constants.CKO_CERTIFICATE);
-    private static CK_ATTRIBUTE TOKEN_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_TOKEN, PKCS11Constants.TRUE);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SmartcardManagerImpl.class);
+    private final static CK_ATTRIBUTE CLASS_CERTIFICATE_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_CLASS, PKCS11Constants.CKO_CERTIFICATE);
+    private final static CK_ATTRIBUTE TOKEN_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_TOKEN, PKCS11Constants.TRUE);
 
     static {
         String osName = System.getProperty("os.name");
@@ -59,7 +58,9 @@ public class SmartcardManagerImpl implements SmartcardManager {
                     Card card = cardTerminal.connect("*");
                     String atrValue = SignerxUtils.byteToHex(card.getATR().getBytes());
                     String libName = getPluggedSmartcardLibName(atrValue);
-                    String libPath = SmartcardManagerImpl.class.getClassLoader().getResource(libName).getPath();
+                    ClassLoader classLoader = SmartcardManagerImpl.class.getClassLoader();
+                    URL resourceUrl = classLoader.getResource(libName);
+                    String libPath = resourceUrl.getPath();
                     signerxSmartcard.setCardLibName(libPath);
                     LOGGER.debug("Surucu Kutuphane Yolu: " + libPath);
                     openSessionOnSmartcard(signerxSmartcard);
@@ -94,11 +95,39 @@ public class SmartcardManagerImpl implements SmartcardManager {
             LOGGER.debug("Session Id: " + sessionId);
             List<X509Certificate> certificates = getSmartcardCertificates(pkcs11, sessionId);
             signerxSmartcard.setCertificateList(certificates);
+            signerxSmartcard.setCertificateInfos(getSignerxCertificateList(certificates));
         } catch (PKCS11Exception e) {
             throw new SignerxException("PKCS11 islemleri sirasinda bir hata olustu!", e);
         } catch (IOException e) {
             throw new SignerxException("Surucu kutuphanesi kullanilarak PKCS11 nesnesi olusturulurken hata olustu!", e);
         }
+    }
+
+    private List<SignerxCertificate> getSignerxCertificateList(List<X509Certificate> certificateList) {
+        List<SignerxCertificate> signerxCertificateList = new ArrayList<>();
+        for (X509Certificate x509Certificate : certificateList) {
+            SignerxCertificate signerxCertificate = new SignerxCertificate();
+            Principal subjectPrinciple = x509Certificate.getSubjectDN();
+            Principal issuerPrincipal = x509Certificate.getIssuerDN();
+            signerxCertificate.setCommonName(getCommonNameFromDN(subjectPrinciple));
+            signerxCertificate.setTckno(getTcKNo(subjectPrinciple));
+            signerxCertificate.setIssuerName(getCommonNameFromDN(issuerPrincipal));
+            signerxCertificate.setSerialNumber(x509Certificate.getSerialNumber().toString());
+            signerxCertificate.setNotBefore(x509Certificate.getNotBefore());
+            signerxCertificate.setNotAfter(x509Certificate.getNotAfter());
+            signerxCertificateList.add(signerxCertificate);
+        }
+        return signerxCertificateList;
+    }
+
+    private String getCommonNameFromDN(Principal principal) {
+        String principalStr = principal.getName();
+        return principalStr.substring(principalStr.indexOf("CN=")+3, principalStr.indexOf(","));
+    }
+
+    private String getTcKNo(Principal principal) {
+        String principalStr = principal.getName();
+        return principalStr.substring(principalStr.indexOf("SERIALNUMBER=")+13, principalStr.indexOf("SERIALNUMBER")+24);
     }
 
     private List<X509Certificate> getSmartcardCertificates(PKCS11 pkcs11, long sessionId) throws SignerxException {
@@ -130,7 +159,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
 
     private String detectSmartcardLib(String atrValue) throws SignerxException {
         List<SmartcardLibrary> smartcardLibraryList = getSmartcardLibraryList(atrValue);
-        if(smartcardLibraryList.size() > 1) {
+        if(smartcardLibraryList != null && smartcardLibraryList.size() > 1) {
             EnumOsArch osArch = SmartcardUtils.detectSystemArch();
             for (SmartcardLibrary smartcardLibrary : smartcardLibraryList) {
                 if(osArch.toString().equalsIgnoreCase(smartcardLibrary.getArch())) {
