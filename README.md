@@ -1,10 +1,14 @@
 # signerx
 gelecex-signer projesi birden fazla modulden olusan vefarkli modullerin imzalamada farkli islemleri ustlendigi bir projedir. 
 
+* signerx-smartcard
 * signerx-cades
 * signerx-xades
 * signerx-pades
 * signerx-verification
+
+## signerx-smartcard
+signerx-smartcard modulu, akilli karta baglanatarak icerisindeki slotlardan sertifikalari ceke kodlari icermektedir.
 
 ## signerx-cades
 signerx-cades modulu, cades ES_BES'ten baslayarak, ES_A tipine kadar imza atabilen kodlari icermektedir.

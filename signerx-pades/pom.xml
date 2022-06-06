@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-    <groupId>com.gelecex.signerx</groupId>
     <artifactId>signerx-pades</artifactId>
     <version>1.0.0</version>
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.gelecex.signerx</groupId>
-        <artifactId>glcx-signerx</artifactId>
+        <artifactId>signerx</artifactId>
         <version>0.0.1</version>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.gelecex.signerx</groupId>
+            <artifactId>signerx-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gelecex.signerx</groupId>
+            <artifactId>signerx-utils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
 </project>
