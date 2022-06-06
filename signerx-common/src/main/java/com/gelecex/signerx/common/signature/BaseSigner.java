@@ -5,6 +5,6 @@ package com.gelecex.signerx.common.signature;
  */
 public interface BaseSigner {
 
-    byte[] sign();
+    byte[] createSignature();
 
 }
