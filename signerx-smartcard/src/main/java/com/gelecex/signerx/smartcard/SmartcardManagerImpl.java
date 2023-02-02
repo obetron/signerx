@@ -28,9 +28,9 @@ import java.util.List;
 
 public class SmartcardManagerImpl implements SmartcardManager {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SmartcardManagerImpl.class);
-    private final static CK_ATTRIBUTE CLASS_CERTIFICATE_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_CLASS, PKCS11Constants.CKO_CERTIFICATE);
-    private final static CK_ATTRIBUTE TOKEN_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_TOKEN, PKCS11Constants.TRUE);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SmartcardManagerImpl.class);
+    private static final CK_ATTRIBUTE CLASS_CERTIFICATE_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_CLASS, PKCS11Constants.CKO_CERTIFICATE);
+    private static final CK_ATTRIBUTE TOKEN_ATTR = new CK_ATTRIBUTE(PKCS11Constants.CKA_TOKEN, PKCS11Constants.TRUE);
 
     static {
         String osName = System.getProperty("os.name");
@@ -79,11 +79,11 @@ public class SmartcardManagerImpl implements SmartcardManager {
             PKCS11 pkcs11 = PKCS11.getInstance(signerxSmartcard.getCardLibName(), "C_GetFunctionList", null, false);
             long[] slotList = pkcs11.C_GetSlotList(true);
             for (long s : slotList) {
-                char NULL_CHAR = '\0';
+                char nullChar = '\0';
                 CK_SLOT_INFO slotInfo = pkcs11.C_GetSlotInfo(s);
                 String str = new String(slotInfo.slotDescription).trim();
-                if (str.indexOf(NULL_CHAR) > 0) {
-                    str = str.substring(0, str.indexOf(NULL_CHAR));
+                if (str.indexOf(nullChar) > 0) {
+                    str = str.substring(0, str.indexOf(nullChar));
                 }
                 if (signerxSmartcard.getCardName().contains(str)) {
                     slotIndex = s;
@@ -167,7 +167,9 @@ public class SmartcardManagerImpl implements SmartcardManager {
                 }
             }
         } else {
-            return smartcardLibraryList.get(0).getName();
+            if(smartcardLibraryList != null && smartcardLibraryList.get(0) != null) {
+                return smartcardLibraryList.get(0).getName();
+            }
         }
         return null;
     }
@@ -183,9 +185,10 @@ public class SmartcardManagerImpl implements SmartcardManager {
                 }
             }
         }
-        LOGGER.error("ATR Degeri: " + atrValue + " - degeri icin kayit bulunamadi!");
-        LOGGER.error("ATR degerini elle scdatabase.xml dosyasina ekleyebilirsiniz!");
-        return null;
+        String log = "ATR Degeri: " + atrValue + " - degeri icin kayit bulunamadi!";
+        log += "\nATR degerini elle scdatabase.xml dosyasina ekleyebilirsiniz!";
+        LOGGER.error(log);
+        return new ArrayList<>();
     }
 
     private String getPluggedSmartcardLibName(String atrValue) throws SignerxException {
