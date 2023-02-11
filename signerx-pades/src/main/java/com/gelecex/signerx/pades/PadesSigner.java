@@ -2,7 +2,7 @@ package com.gelecex.signerx.pades;
 
 import com.gelecex.signerx.common.exception.SignerxException;
 import com.gelecex.signerx.common.signature.BaseSigner;
-import com.gelecex.signerx.pades.model.PadesSignature;
+import com.gelecex.signerx.pades.dto.PadesSignature;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.ExternalSigningSupport;
@@ -26,11 +26,11 @@ public class PadesSigner implements BaseSigner {
 
     @Override
     public byte[] createSignature(byte[] dataToBeSigned) throws SignerxException {
+        return createPdfSignature(dataToBeSigned);
 
 
         //TODO: 1. check the type of byte array is really pdf?
         //TODO: 2. sign byte array pdf in pades format.
-        return new byte[0];
     }
 
     private byte[] createPdfSignature(byte[] originalPdf) throws SignerxException {

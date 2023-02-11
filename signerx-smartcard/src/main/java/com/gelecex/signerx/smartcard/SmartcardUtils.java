@@ -19,6 +19,8 @@ public class SmartcardUtils {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(SmartcardUtils.class);
 
+    private SmartcardUtils(){}
+
     public static EnumOsArch detectSystemArch() {
         String osArch = System.getProperty("os.arch");
         if(osArch.contains("64")) {
@@ -42,14 +44,14 @@ public class SmartcardUtils {
 
     public static void clearSmartcardCache() {
         try {
-            Class pcscterminal = null;
+            Class<?> pcscterminal = null;
             pcscterminal = Class.forName("sun.security.smartcardio.PCSCTerminals");
             Field contextId = pcscterminal.getDeclaredField("contextId");
             contextId.setAccessible(true);
 
             if (contextId.getLong(pcscterminal) != 0L) {
                 // First get a new context value
-                Class pcsc = Class.forName("sun.security.smartcardio.PCSC");
+                Class<?> pcsc = Class.forName("sun.security.smartcardio.PCSC");
                 Method SCardEstablishContext = pcsc.getDeclaredMethod(
                         "SCardEstablishContext",
                         new Class[]{Integer.TYPE}

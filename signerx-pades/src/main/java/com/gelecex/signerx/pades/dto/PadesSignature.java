@@ -1,4 +1,4 @@
-package com.gelecex.signerx.pades.model;
+package com.gelecex.signerx.pades.dto;
 
 /**
  * Created by obetron on 7.06.2022
