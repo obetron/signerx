@@ -2,13 +2,13 @@
 
 <project>
     <artifactId>signerx-xades</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.1</version>
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.gelecex.signerx</groupId>
         <artifactId>signerx</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.3</version>
     </parent>
 
 
