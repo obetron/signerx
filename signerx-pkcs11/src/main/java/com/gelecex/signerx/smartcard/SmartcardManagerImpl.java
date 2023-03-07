@@ -48,10 +48,10 @@ public class SmartcardManagerImpl implements SmartcardManager {
             TerminalFactory terminalFactory = TerminalFactory.getDefault();
             CardTerminals cardTerminals = terminalFactory.terminals();
             List<CardTerminal> cardTerminalList = cardTerminals.list(CardTerminals.State.CARD_PRESENT);
-            if(cardTerminalList.size() == 0) {
+            if(cardTerminalList.isEmpty()) {
                 LOGGER.warn("Bilgisayarda takili akilli kart bulunamadi!");
             } else {
-                LOGGER.info(cardTerminalList.size() + " adet takili akilli kart tespit edildi.");
+                LOGGER.info("{} adet takili akilli kart tespit edildi.", cardTerminalList.size());
                 for (CardTerminal cardTerminal : cardTerminalList) {
                     SignerxSmartcard signerxSmartcard = new SignerxSmartcard();
                     signerxSmartcard.setCardName(cardTerminal.getName());
@@ -62,7 +62,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
                     URL resourceUrl = classLoader.getResource(libName);
                     String libPath = resourceUrl.getPath();
                     signerxSmartcard.setCardLibName(libPath);
-                    LOGGER.debug("Surucu Kutuphane Yolu: " + libPath);
+                    LOGGER.debug("Surucu Kutuphane Yolu: {}", libPath);
                     openSessionOnSmartcard(signerxSmartcard);
                     signerxSmartcardList.add(signerxSmartcard);
                 }
@@ -91,8 +91,8 @@ public class SmartcardManagerImpl implements SmartcardManager {
             }
             long sessionId = pkcs11.C_OpenSession(slotIndex, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
             CK_SESSION_INFO sessionInfo = pkcs11.C_GetSessionInfo(sessionId);
-            LOGGER.debug("Session Info: " + sessionInfo.toString());
-            LOGGER.debug("Session Id: " + sessionId);
+            LOGGER.debug("Session Info: {}", sessionInfo.toString());
+            LOGGER.debug("Session Id: {}", sessionId);
             List<X509Certificate> certificates = getSmartcardCertificates(pkcs11, sessionId);
             signerxSmartcard.setCertificateList(certificates);
             signerxSmartcard.setCertificateInfos(getSignerxCertificateList(certificates));
@@ -149,7 +149,7 @@ public class SmartcardManagerImpl implements SmartcardManager {
                 CertificateFactory factory = CertificateFactory.getInstance("X.509");
                 X509Certificate signerCert = (X509Certificate) factory.generateCertificate(certStream);
                 certificateList.add(signerCert);
-                LOGGER.debug("Sertifika: " + signerCert.getSubjectDN().getName());
+                LOGGER.debug("Sertifika: {}", signerCert.getSubjectDN().getName());
             }
             return certificateList;
         } catch (PKCS11Exception | CertificateException e) {
