@@ -4,7 +4,8 @@
     <parent>
         <groupId>com.gelecex.signerx</groupId>
         <artifactId>signerx</artifactId>
-        <version>0.0.4</version>
+        <version>0.0.5</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <name>signerx-webservice</name>
 
